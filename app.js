@@ -5,7 +5,7 @@ if (tg) {
   tg.expand();
 }
 
-const SUPABASE_URL = "https://uqgckzrmibdgxkxdfzav.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://uqgckzrmibdgxkxdfzav.supabase.co";
 const SUPABASE_KEY = "sb_publishable_KBodwmECQvN46zDKjOwfhg_fet6nBiy";
 
 const headers = {
