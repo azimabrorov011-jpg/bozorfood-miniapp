@@ -2,47 +2,23 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>BozorFood</title>
-<link rel="stylesheet" href="styles.css">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div id="app">
-  <header class="topbar">
-    <div>
-      <div class="brand">BozorFood</div>
-      <div class="sub">Rastangizgacha issiq ovqat</div>
-    </div>
-    <button id="themeBtn" class="icon-btn">☀️</button>
-  </header>
-
-  <section class="location-card">
-    <div class="pin">📍</div>
-    <div>
-      <div class="muted">Yetkazish joyi</div>
-      <strong id="stall">B001 · 12-rasta</strong>
-    </div>
-    <button class="change" id="changeStall">O‘zgartirish</button>
-  </section>
-
-  <div class="search-wrap"><span>⌕</span><input id="search" placeholder="Taom qidirish..."></div>
-  <div class="chips" id="chips"></div>
-  <main id="products"></main>
+<div class="app">
+<header class="topbar"><div><div class="brand">🍽 BozorFood</div><div class="subtitle">Bozor ichida issiq ovqat — joyingizgacha</div></div><div class="avatar">👤</div></header>
+<main>
+<section class="location-card"><div class="pin">📍</div><div class="location-info"><div class="label">Sizning joyingiz</div><div id="shopName" class="shop-name">Aniqlanmoqda...</div><div id="shopLocation" class="shop-location">...</div></div><div id="shopId" class="shop-id">B001</div></section>
+<div class="search"><span>🔎</span><input id="searchInput" type="search" placeholder="Ovqat qidiring..."></div>
+<div id="categories" class="categories"></div><section id="menu" class="menu"></section>
+</main>
+<button id="cartButton" class="cart-button hidden"><span>🛒 Savatcha</span><span id="cartCount">0</span><strong id="cartTotal">0 so'm</strong></button>
 </div>
-
-<div id="cartBar" class="cart-bar hidden">
-  <div><b id="cartCount">0</b> ta mahsulot · <b id="cartTotal">0</b> so‘m</div>
-  <button id="openCart">Savat →</button>
-</div>
-
-<div id="modal" class="modal hidden">
-  <div class="sheet">
-    <button class="close" id="closeModal">×</button>
-    <div id="sheetContent"></div>
-  </div>
-</div>
-
+<div id="cartModal" class="modal hidden"><div class="sheet"><div class="sheet-head"><h2>🛒 Savatcha</h2><button id="closeCart">✕</button></div><div id="cartItems"></div><div class="checkout"><div class="row"><span>Jami</span><strong id="checkoutTotal">0 so'm</strong></div><input id="phone" placeholder="Telefon raqam" inputmode="tel"><textarea id="note" placeholder="Izoh: masalan, 3-qator 47-do‘kon oldiga..."></textarea><button id="orderButton">Buyurtma berish</button></div></div></div>
+<div id="successModal" class="modal hidden"><div class="sheet success"><div class="success-icon">✅</div><h2>Buyurtma qabul qilindi!</h2><p id="orderNumber"></p><p class="muted">Oshxona tayyorlaydi, kuryer esa aynan sizning joyingizga olib boradi.</p><button id="doneButton">Yopish</button></div></div>
 <script src="app.js"></script>
 </body>
 </html>
