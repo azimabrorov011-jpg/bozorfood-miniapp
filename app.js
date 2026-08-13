@@ -67,7 +67,7 @@ async function loadShop() {
 
 async function loadMenu() {
   const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/menu_items?is_available=eq.true&select=*&order=id.asc`,
+    `${SUPABASE_URL}/rest/v1/menu_items?shop_code=eq.${encodeURIComponent(shopCode)}&is_available=eq.true&select=*&order=id.asc`,
     {
       headers
     }
@@ -219,6 +219,14 @@ window.changeQty = function (id, difference) {
 
   if (!item) return;
 
+  if (
+    difference > 0 &&
+    item.qty >= item.stock
+  ) {
+    alert("Bu mahsulotning qoldig‘i yetarli emas.");
+    return;
+  }
+
   item.qty += difference;
 
   if (item.qty <= 0) {
@@ -343,12 +351,6 @@ document.getElementById("orderButton").onclick =
       0
     );
 
-    const orderNumber =
-      "RG-" +
-      Math.floor(
-        100000 + Math.random() * 900000
-      );
-
     const customerName =
       tg?.initDataUnsafe?.user?.first_name || "";
 
@@ -358,7 +360,6 @@ document.getElementById("orderButton").onclick =
         .trim();
 
     const orderData = {
-      order_number: orderNumber,
       shop_code: currentShop.shop_code,
       customer_name: customerName,
       phone: phone,
@@ -382,7 +383,7 @@ document.getElementById("orderButton").onclick =
 
           headers: {
             ...headers,
-            Prefer: "return=minimal"
+            Prefer: "return=representation"
           },
 
           body: JSON.stringify(orderData)
@@ -402,6 +403,15 @@ document.getElementById("orderButton").onclick =
 
         return;
       }
+
+      const createdOrders =
+        await response.json();
+
+      const createdOrder =
+        createdOrders[0];
+
+      const orderNumber =
+        createdOrder?.order_number || "ORD";
 
       document.getElementById("orderNumber")
         .textContent =
