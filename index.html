@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BozorFood</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div>
+      <div class="brand">BozorFood</div>
+      <div class="sub">Rastangizgacha issiq ovqat</div>
+    </div>
+    <button id="themeBtn" class="icon-btn">☀️</button>
+  </header>
+
+  <section class="location-card">
+    <div class="pin">📍</div>
+    <div>
+      <div class="muted">Yetkazish joyi</div>
+      <strong id="stall">B001 · 12-rasta</strong>
+    </div>
+    <button class="change" id="changeStall">O‘zgartirish</button>
+  </section>
+
+  <div class="search-wrap"><span>⌕</span><input id="search" placeholder="Taom qidirish..."></div>
+  <div class="chips" id="chips"></div>
+  <main id="products"></main>
+</div>
+
+<div id="cartBar" class="cart-bar hidden">
+  <div><b id="cartCount">0</b> ta mahsulot · <b id="cartTotal">0</b> so‘m</div>
+  <button id="openCart">Savat →</button>
+</div>
+
+<div id="modal" class="modal hidden">
+  <div class="sheet">
+    <button class="close" id="closeModal">×</button>
+    <div id="sheetContent"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
