@@ -398,7 +398,7 @@ document.getElementById("orderButton").onclick =
         console.error(errorText);
 
         alert(
-          "Buyurtmani yuborishda xatolik yuz berdi."
+          "Xatolik: " + errorText
         );
 
         return;
