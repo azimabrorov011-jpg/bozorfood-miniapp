@@ -1,30 +1,27 @@
+RastaGo Courier — scroll saqlanadigan versiya
+
 <!DOCTYPE html>
 <html lang="uz">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta
   name="viewport"
   content="width=device-width, initial-scale=1.0"
 >
-
 <title>RastaGo Courier</title>
-
 <style>
-
 *{
   box-sizing:border-box;
 }
-
+html{
+  scroll-behavior:auto;
+}
 body{
   margin:0;
   background:#f4f6f8;
   color:#111827;
   font-family:Arial,sans-serif;
 }
-
 header{
   background:#111827;
   color:white;
@@ -33,7 +30,6 @@ header{
   top:0;
   z-index:100;
 }
-
 .header{
   max-width:800px;
   margin:auto;
@@ -41,12 +37,10 @@ header{
   align-items:center;
   justify-content:space-between;
 }
-
 .logo{
   font-size:22px;
   font-weight:bold;
 }
-
 .refresh{
   border:0;
   background:white;
@@ -56,19 +50,16 @@ header{
   font-size:17px;
   cursor:pointer;
 }
-
 .container{
   max-width:800px;
   margin:auto;
   padding:16px;
 }
-
 .section-title{
   font-size:20px;
   font-weight:bold;
   margin-bottom:14px;
 }
-
 .order{
   background:white;
   border-radius:18px;
@@ -76,7 +67,6 @@ header{
   margin-bottom:15px;
   box-shadow:0 3px 12px rgba(0,0,0,.07);
 }
-
 .order-header{
   display:flex;
   justify-content:space-between;
@@ -84,12 +74,10 @@ header{
   gap:10px;
   margin-bottom:15px;
 }
-
 .order-number{
   font-size:21px;
   font-weight:bold;
 }
-
 .status{
   background:#fef3c7;
   color:#92400e;
@@ -98,34 +86,28 @@ header{
   font-size:12px;
   font-weight:bold;
 }
-
 .status.courier{
   background:#dbeafe;
   color:#1d4ed8;
 }
-
 .info{
   background:#f8fafc;
   border-radius:13px;
   padding:13px;
   margin-bottom:10px;
 }
-
 .info-title{
   color:#6b7280;
   font-size:12px;
   margin-bottom:4px;
 }
-
 .info-value{
   font-size:16px;
   font-weight:bold;
 }
-
 .items{
   margin-top:15px;
 }
-
 .item{
   display:flex;
   justify-content:space-between;
@@ -133,19 +115,15 @@ header{
   padding:10px 0;
   border-bottom:1px solid #e5e7eb;
 }
-
 .item:last-child{
   border-bottom:0;
 }
-
 .item-name{
   font-weight:bold;
 }
-
 .item-qty{
   font-weight:bold;
 }
-
 .action{
   width:100%;
   border:0;
@@ -156,17 +134,14 @@ header{
   font-weight:bold;
   cursor:pointer;
 }
-
 .take{
   background:#2563eb;
   color:white;
 }
-
 .deliver{
   background:#16a34a;
   color:white;
 }
-
 .empty{
   background:white;
   border-radius:18px;
@@ -174,18 +149,15 @@ header{
   text-align:center;
   color:#6b7280;
 }
-
 .empty-icon{
   font-size:45px;
   margin-bottom:10px;
 }
-
 .loading{
   text-align:center;
   padding:50px;
   color:#6b7280;
 }
-
 .toast{
   position:fixed;
   left:50%;
@@ -200,422 +172,284 @@ header{
   max-width:90%;
   text-align:center;
 }
-
 </style>
-
 </head>
-
-
 <body>
-
 <header>
-
 <div class="header">
-
 <div class="logo">
 🚚 RastaGo Courier
 </div>
-
 <button
   class="refresh"
-  onclick="loadOrders()"
+  onclick="manualRefresh()"
 >
 🔄
 </button>
-
 </div>
-
 </header>
-
-
 <div class="container">
-
 <div class="section-title">
 Yetkazilishi kerak
 </div>
-
-
 <div
   id="orders"
   class="loading"
 >
 Yuklanmoqda...
 </div>
-
 </div>
-
-
 <div
   id="toast"
   class="toast"
 ></div>
-
-
 <script>
-
 const SUPABASE_URL =
 "https://uqgckzrmibdgxkxdfzav.supabase.co";
-
 const SUPABASE_KEY =
 "sb_publishable_KBodwmECQvN46zDKjOwfhg_fet6nBiy";
-
-
-async function loadOrders(){
-
+async function loadOrders(
+  preserveScroll = true
+){
+  const scrollY =
+    window.scrollY;
   const box =
     document.getElementById("orders");
-
-
-  box.innerHTML =
-    `<div class="loading">
-      Yuklanmoqda...
-    </div>`;
-
-
+  /*
+    Avtomatik yangilanishda
+    loading yozuvini ko‘rsatmaymiz.
+    Shuning uchun sahifa sakramaydi.
+  */
+  if(!preserveScroll){
+    box.innerHTML =
+      `<div class="loading">
+        Yuklanmoqda...
+      </div>`;
+  }
   try{
-
     const response =
       await fetch(
-
         SUPABASE_URL +
         "/rest/v1/orders" +
         "?select=*" +
         "&status=in.(ready,courier)" +
         "&order=created_at.asc",
-
         {
-
           headers:{
             apikey:SUPABASE_KEY,
             Authorization:
               "Bearer "+SUPABASE_KEY
           }
-
         }
-
       );
-
-
     if(!response.ok){
-
       const error =
         await response.text();
-
       box.innerHTML =
         `<div class="empty">
           Xatolik: ${escapeHtml(error)}
         </div>`;
-
       return;
-
     }
-
-
     const orders =
       await response.json();
-
-
     if(!orders.length){
-
       box.innerHTML = `
-
         <div class="empty">
-
           <div class="empty-icon">
             🚚
           </div>
-
           <div style="
             font-size:19px;
             font-weight:bold;
           ">
             Hozircha yetkaziladigan buyurtma yo‘q
           </div>
-
           <div style="margin-top:8px">
             Tayyor buyurtmalar shu yerda ko‘rinadi.
           </div>
-
         </div>
-
       `;
-
-      return;
-
+    }else{
+      const shopCodes =
+        [...new Set(
+          orders
+            .map(order => order.shop_code)
+            .filter(Boolean)
+        )];
+      const shops =
+        await loadShops(shopCodes);
+      renderOrders(
+        orders,
+        shops
+      );
     }
-
-
-    const shopCodes =
-      [...new Set(
-        orders
-          .map(order => order.shop_code)
-          .filter(Boolean)
-      )];
-
-
-    const shops =
-      await loadShops(shopCodes);
-
-
-    renderOrders(
-      orders,
-      shops
-    );
-
-
+    /*
+      Eng muhim qism:
+      avtomatik refreshdan keyin
+      avvalgi scroll joyiga qaytadi.
+    */
+    if(preserveScroll){
+      requestAnimationFrame(()=>{
+        window.scrollTo(
+          0,
+          scrollY
+        );
+      });
+    }
   }catch(error){
-
     console.log(error);
-
     box.innerHTML =
       `<div class="empty">
         Server bilan bog‘lanishda xatolik.
       </div>`;
-
   }
-
 }
-
-
 async function loadShops(codes){
-
   if(!codes.length)
     return {};
-
-
   const filter =
     codes
       .map(code =>
         `"${String(code).replace(/"/g,'\\"')}"`
       )
       .join(",");
-
-
   try{
-
     const response =
       await fetch(
-
         SUPABASE_URL +
         "/rest/v1/shops" +
         "?select=shop_code,display_name,address" +
         "&shop_code=in.(" +
         encodeURIComponent(filter) +
         ")",
-
         {
-
           headers:{
             apikey:SUPABASE_KEY,
             Authorization:
               "Bearer "+SUPABASE_KEY
           }
-
         }
-
       );
-
-
     if(!response.ok)
       return {};
-
-
     const data =
       await response.json();
-
-
     const result = {};
-
-
     data.forEach(shop=>{
-
       result[shop.shop_code] =
         shop;
-
     });
-
-
     return result;
-
-
   }catch(error){
-
     console.log(error);
-
     return {};
-
   }
-
 }
-
-
 function renderOrders(
   orders,
   shops
 ){
-
   const box =
     document.getElementById("orders");
-
-
   let html = "";
-
-
   orders.forEach(order=>{
-
     const shop =
       shops[order.shop_code] || {};
-
-
     const shopName =
       shop.display_name ||
       order.shop_code ||
       "Do‘kon";
-
-
     const address =
       order.delivery_address ||
       shop.address ||
       "Manzil ko‘rsatilmagan";
-
-
     const status =
       order.status;
-
-
     const items =
       Array.isArray(order.items)
       ? order.items
       : [];
-
-
     let itemsHtml = "";
-
-
     items.forEach(item=>{
-
       const name =
         item.name ||
         "Mahsulot";
-
-
       const qty =
         item.quantity ||
         item.qty ||
         0;
-
-
       itemsHtml += `
-
         <div class="item">
-
           <div class="item-name">
             ${escapeHtml(name)}
           </div>
-
           <div class="item-qty">
             ${escapeHtml(String(qty))} dona
           </div>
-
         </div>
-
       `;
-
     });
-
-
     html += `
-
       <div class="order">
-
         <div class="order-header">
-
           <div class="order-number">
-
             🧾 ${escapeHtml(
               order.order_number ||
               ("#" + order.id)
             )}
-
           </div>
-
           <div class="status ${
             status === "courier"
             ? "courier"
             : ""
           }">
-
             ${
               status === "courier"
               ? "🚚 KURYERDA"
               : "✅ TAYYOR"
             }
-
           </div>
-
         </div>
-
-
         <div class="info">
-
           <div class="info-title">
             DO‘KON
           </div>
-
           <div class="info-value">
             🏪 ${escapeHtml(shopName)}
           </div>
-
         </div>
-
-
         <div class="info">
-
           <div class="info-title">
             YETKAZIB BERISH MANZILI
           </div>
-
           <div class="info-value">
             📍 ${escapeHtml(address)}
           </div>
-
         </div>
-
-
         <div class="info">
-
           <div class="info-title">
             MIJOZ
           </div>
-
           <div class="info-value">
             👤 ${escapeHtml(
               order.customer_name ||
               "Ko‘rsatilmagan"
             )}
           </div>
-
         </div>
-
-
         <div class="info">
-
           <div class="info-title">
             TELEFON
           </div>
-
           <div class="info-value">
             📞 ${escapeHtml(
               order.phone ||
               "Ko‘rsatilmagan"
             )}
           </div>
-
         </div>
-
-
         <div class="items">
-
           <div style="
             font-size:13px;
             color:#6b7280;
@@ -623,22 +457,16 @@ function renderOrders(
           ">
             BUYURTMADAGI MAHSULOTLAR
           </div>
-
           ${
             itemsHtml ||
             `<div style="color:#6b7280">
               Mahsulotlar ko‘rsatilmagan
             </div>`
           }
-
         </div>
-
-
         ${
           status === "ready"
-
           ?
-
           `
           <button
             class="action take"
@@ -647,9 +475,7 @@ function renderOrders(
             🚚 BUYURTMANI OLDIM
           </button>
           `
-
           :
-
           `
           <button
             class="action deliver"
@@ -658,196 +484,120 @@ function renderOrders(
             ✅ YETKAZIB BERILDI
           </button>
           `
-
         }
-
       </div>
-
     `;
-
   });
-
-
   box.innerHTML =
     html;
-
 }
-
-
 async function updateOrderStatus(
   id,
   status
 ){
-
   try{
-
     const response =
       await fetch(
-
         SUPABASE_URL +
         "/rest/v1/orders?id=eq."+id,
-
         {
-
           method:"PATCH",
-
           headers:{
-
             apikey:SUPABASE_KEY,
-
             Authorization:
               "Bearer "+SUPABASE_KEY,
-
             "Content-Type":
               "application/json",
-
             Prefer:
               "return=minimal"
-
           },
-
           body:JSON.stringify({
-
             status:status
-
           })
-
         }
-
       );
-
-
     if(!response.ok){
-
       console.log(
         await response.text()
       );
-
       showToast(
         "❌ Statusni o‘zgartirib bo‘lmadi"
       );
-
       return false;
-
     }
-
-
     return true;
-
-
   }catch(error){
-
     console.log(error);
-
     showToast(
       "❌ Internet xatosi"
     );
-
     return false;
-
   }
-
 }
-
-
 async function takeOrder(id){
-
   const success =
     await updateOrderStatus(
       id,
       "courier"
     );
-
-
   if(success){
-
     showToast(
       "🚚 Buyurtma kuryerga biriktirildi"
     );
-
-
     setTimeout(
-      loadOrders,
+      ()=>loadOrders(true),
       500
     );
-
   }
-
 }
-
-
 async function deliverOrder(id){
-
   const success =
     await updateOrderStatus(
       id,
       "delivered"
     );
-
-
   if(success){
-
     showToast(
       "✅ Buyurtma yetkazib berildi!"
     );
-
-
     setTimeout(
-      loadOrders,
+      ()=>loadOrders(true),
       500
     );
-
   }
-
 }
-
-
+function manualRefresh(){
+  loadOrders(false);
+}
 function escapeHtml(value){
-
   return String(value ?? "")
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
-
 }
-
-
 function showToast(text){
-
   const toast =
     document.getElementById("toast");
-
-
   toast.textContent =
     text;
-
-
   toast.style.display =
     "block";
-
-
   setTimeout(()=>{
-
     toast.style.display =
       "none";
-
   },2500);
-
 }
-
-
-loadOrders();
-
-
+loadOrders(false);
+/*
+  Har 15 soniyada avtomatik yangilanadi.
+  Scroll joyi saqlanadi.
+*/
 setInterval(
-  loadOrders,
+  ()=>loadOrders(true),
   15000
 );
-
 </script>
-
 </body>
-
 </html>
