@@ -1,24 +1,1313 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>BozorFood</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link rel="stylesheet" href="styles.css">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>RastaGo Kitchen</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:#f4f6f8;
+  color:#111827;
+  font-family:Arial,sans-serif;
+}
+
+header{
+  background:#111827;
+  color:white;
+  padding:18px 16px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.header{
+  max-width:800px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  font-size:22px;
+  font-weight:bold;
+}
+
+.refresh{
+  border:0;
+  background:white;
+  color:#111827;
+  padding:10px 13px;
+  border-radius:10px;
+  font-size:17px;
+  cursor:pointer;
+}
+
+.container{
+  max-width:800px;
+  margin:auto;
+  padding:16px;
+}
+
+.summary{
+  background:white;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:15px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.summary-title{
+  font-size:14px;
+  color:#6b7280;
+}
+
+.summary-number{
+  font-size:30px;
+  font-weight:bold;
+  margin-top:4px;
+}
+
+.progress-box{
+  margin-top:15px;
+}
+
+.progress-text{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  margin-bottom:6px;
+}
+
+.progress{
+  height:12px;
+  background:#e5e7eb;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:#16a34a;
+  transition:.3s;
+}
+
+.product{
+  background:white;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:13px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+  border-left:5px solid #f59e0b;
+}
+
+.product.done{
+  border-left-color:#16a34a;
+  background:#f0fdf4;
+}
+
+.product-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.product-name{
+  font-size:21px;
+  font-weight:bold;
+}
+
+.done-badge{
+  background:#16a34a;
+  color:white;
+  padding:6px 9px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.quantities{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:15px;
+}
+
+.quantity{
+  background:#f8fafc;
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+}
+
+.quantity-title{
+  color:#6b7280;
+  font-size:12px;
+}
+
+.quantity-number{
+  font-size:25px;
+  font-weight:bold;
+  margin-top:4px;
+}
+
+.remaining{
+  color:#dc2626;
+}
+
+.controls{
+  display:grid;
+  grid-template-columns:1fr 1.5fr 1.5fr 1.5fr;
+  gap:8px;
+  margin-top:15px;
+}
+
+.control{
+  border:0;
+  border-radius:12px;
+  padding:14px 8px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.minus{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+
+.plus{
+  background:#111827;
+  color:white;
+}
+
+.complete{
+  margin-top:15px;
+  width:100%;
+  border:0;
+  padding:15px;
+  border-radius:13px;
+  background:#16a34a;
+  color:white;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.complete:disabled{
+  background:#d1d5db;
+  cursor:not-allowed;
+}
+
+.all-done{
+  display:none;
+  background:#16a34a;
+  color:white;
+  border-radius:18px;
+  padding:22px;
+  text-align:center;
+  font-size:21px;
+  font-weight:bold;
+  margin-top:15px;
+}
+
+.empty{
+  background:white;
+  border-radius:18px;
+  padding:50px 20px;
+  text-align:center;
+  color:#6b7280;
+}
+
+.loading{
+  text-align:center;
+  padding:50px;
+  color:#6b7280;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translateX(-50%);
+  background:#111827;
+  color:white;
+  padding:13px 18px;
+  border-radius:12px;
+  display:none;
+  z-index:999;
+}
+
+</style>
+
 </head>
+
+
 <body>
-<div class="app">
-<header class="topbar"><div><div class="brand">🍽 BozorFood</div><div class="subtitle">Bozor ichida issiq ovqat — joyingizgacha</div></div><div class="avatar">👤</div></header>
-<main>
-<section class="location-card"><div class="pin">📍</div><div class="location-info"><div class="label">Sizning joyingiz</div><div id="shopName" class="shop-name">Aniqlanmoqda...</div><div id="shopLocation" class="shop-location">...</div></div><div id="shopId" class="shop-id">B001</div></section>
-<div class="search"><span>🔎</span><input id="searchInput" type="search" placeholder="Ovqat qidiring..."></div>
-<div id="categories" class="categories"></div><section id="menu" class="menu"></section>
-</main>
-<button id="cartButton" class="cart-button hidden"><span>🛒 Savatcha</span><span id="cartCount">0</span><strong id="cartTotal">0 so'm</strong></button>
+
+<header>
+
+<div class="header">
+
+<div class="logo">
+👨‍🍳 RastaGo Kitchen
 </div>
-<div id="cartModal" class="modal hidden"><div class="sheet"><div class="sheet-head"><h2>🛒 Savatcha</h2><button id="closeCart">✕</button></div><div id="cartItems"></div><div class="checkout"><div class="row"><span>Jami</span><strong id="checkoutTotal">0 so'm</strong></div><input id="phone" placeholder="Telefon raqam" inputmode="tel"><textarea id="note" placeholder="Izoh: masalan, 3-qator 47-do‘kon oldiga..."></textarea><button id="orderButton">Buyurtma berish</button></div></div></div>
-<div id="successModal" class="modal hidden"><div class="sheet success"><div class="success-icon">✅</div><h2>Buyurtma qabul qilindi!</h2><p id="orderNumber"></p><p class="muted">Oshxona tayyorlaydi, kuryer esa aynan sizning joyingizga olib boradi.</p><button id="doneButton">Yopish</button></div></div>
-<script src="app.js"></script>
+
+<button
+  class="refresh"
+  onclick="loadKitchen()"
+>
+🔄
+</button>
+
+</div>
+
+</header>
+
+
+<div class="container">
+
+<div class="summary">
+
+<div class="summary-title">
+Bugungi tayyorlash jarayoni
+</div>
+
+<div
+  id="overallPercent"
+  class="summary-number"
+>
+0%
+</div>
+
+<div class="progress-box">
+
+<div class="progress-text">
+
+<span>
+Tayyorlandi
+</span>
+
+<span id="overallText">
+0 / 0
+</span>
+
+</div>
+
+<div class="progress">
+
+<div
+  id="progressBar"
+  class="progress-bar"
+></div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div
+  id="products"
+  class="loading"
+>
+Yuklanmoqda...
+</div>
+
+
+<div
+  id="allDone"
+  class="all-done"
+>
+🎉 HAMMASI TAYYOR!
+</div>
+
+</div>
+
+
+<div
+  id="toast"
+  class="toast"
+></div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://uqgckzrmibdgxkxdfzav.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_KBodwmECQvN46zDKjOwfhg_fet6nBiy";
+
+
+let kitchenData = {};
+
+let currentOrders = [];
+
+let previousPrepared = {};
+
+
+const productIcons = {
+
+  "osh":"🍚",
+  "lag'mon":"🍜",
+  "lagmon":"🍜",
+  "somsa":"🥟",
+  "sho'rva":"🍲",
+  "shorva":"🍲",
+  "manti":"🥟",
+  "kabob":"🍢",
+  "non":"🥖"
+
+};
+
+
+function getIcon(name){
+
+  const key =
+    String(name)
+    .toLowerCase()
+    .trim();
+
+  return productIcons[key] || "🍽️";
+
+}
+
+
+function today(){
+
+  return new Date()
+    .toISOString()
+    .slice(0,10);
+
+}
+
+
+/* =========================
+   YANGI BUYURTMALARNI OLISH
+========================= */
+
+async function loadKitchen(){
+
+  try{
+
+    const response = await fetch(
+
+      SUPABASE_URL +
+      "/rest/v1/orders" +
+      "?select=*" +
+      "&status=in.(new,preparing)" +
+      "&order=created_at.asc",
+
+      {
+        headers:{
+          apikey:SUPABASE_KEY,
+          Authorization:"Bearer "+SUPABASE_KEY
+        }
+      }
+
+    );
+
+
+    if(!response.ok){
+
+      const error =
+        await response.text();
+
+      document.getElementById("products").innerHTML =
+        `<div class="empty">
+          Xatolik: ${error}
+        </div>`;
+
+      return;
+
+    }
+
+
+    const orders =
+      await response.json();
+
+
+    currentOrders =
+      orders;
+
+
+    await buildKitchen(orders);
+
+
+  }catch(error){
+
+    console.log(error);
+
+    document.getElementById("products").innerHTML =
+      `<div class="empty">
+        Server bilan bog‘lanishda xatolik.
+      </div>`;
+
+  }
+
+}
+
+
+/* =========================
+   MAHSULOTLARNI YIG‘ISH
+========================= */
+
+async function buildKitchen(orders){
+
+  kitchenData = {};
+
+
+  orders.forEach(order=>{
+
+    const items =
+      Array.isArray(order.items)
+      ? order.items
+      : [];
+
+
+    items.forEach(item=>{
+
+      const name =
+        String(
+          item.name ||
+          "Mahsulot"
+        ).trim();
+
+
+      const key =
+        name.toLowerCase();
+
+
+      const quantity =
+        Number(
+          item.quantity ||
+          item.qty ||
+          0
+        );
+
+
+      if(!kitchenData[key]){
+
+        kitchenData[key] = {
+
+          name:name,
+
+          required:0,
+
+          prepared:0
+
+        };
+
+      }
+
+
+      kitchenData[key].required +=
+        quantity;
+
+    });
+
+  });
+
+
+  await loadPrepared();
+
+  renderKitchen();
+
+}
+
+
+/* =========================
+   KITCHEN_ITEMS DAN
+   TAYYOR MIQDORNI OLISH
+========================= */
+
+async function loadPrepared(){
+
+  const products =
+    Object.values(kitchenData);
+
+
+  if(!products.length)
+    return;
+
+
+  const response = await fetch(
+
+    SUPABASE_URL +
+    "/rest/v1/kitchen_items" +
+    "?select=product_name,prepared_quantity" +
+    "&production_date=eq."+today(),
+
+    {
+      headers:{
+        apikey:SUPABASE_KEY,
+        Authorization:"Bearer "+SUPABASE_KEY
+      }
+    }
+
+  );
+
+
+  if(!response.ok){
+
+    console.log(
+      await response.text()
+    );
+
+    return;
+
+  }
+
+
+  const data =
+    await response.json();
+
+
+  /*
+    MUHIM:
+
+    kitchen_items dagi prepared_quantity
+    kunlik tayyorlangan jami mahsulot.
+
+    Lekin yangi order kelganda uni
+    avtomatik "tayyor" qilib yubormaslik kerak.
+
+    Shuning uchun mavjud tayyor miqdorni
+    faqat real umumiy talabga nisbatan
+    hisoblaymiz.
+  */
+
+
+  data.forEach(row=>{
+
+    const key =
+      String(row.product_name)
+      .toLowerCase()
+      .trim();
+
+
+    if(kitchenData[key]){
+
+      kitchenData[key].prepared =
+        Number(
+          row.prepared_quantity || 0
+        );
+
+    }
+
+  });
+
+
+}
+
+
+/* =========================
+   EKRANGA CHIQARISH
+========================= */
+
+function renderKitchen(){
+
+  const box =
+    document.getElementById("products");
+
+
+  const products =
+    Object.values(kitchenData);
+
+
+  if(!products.length){
+
+    box.innerHTML = `
+
+      <div class="empty">
+
+        <div style="font-size:40px">
+          👨‍🍳
+        </div>
+
+        <div style="
+          font-size:19px;
+          font-weight:bold;
+          margin-top:10px
+        ">
+          Hozircha tayyorlash uchun buyurtma yo‘q
+        </div>
+
+        <div style="margin-top:7px">
+          Yangi buyurtmalar kelganda shu yerda ko‘rinadi.
+        </div>
+
+      </div>
+
+    `;
+
+
+    updateSummary([]);
+
+    return;
+
+  }
+
+
+  let html = "";
+
+
+  products.forEach((product,index)=>{
+
+    /*
+      Tayyorlangan miqdor hech qachon
+      kerakli miqdordan katta ko‘rsatilmaydi.
+    */
+
+    const prepared =
+      Math.min(
+
+        Number(
+          product.prepared || 0
+        ),
+
+        Number(
+          product.required || 0
+        )
+
+      );
+
+
+    product.prepared =
+      prepared;
+
+
+    const remaining =
+      Math.max(
+
+        Number(product.required || 0) -
+        prepared,
+
+        0
+
+      );
+
+
+    const done =
+      remaining === 0;
+
+
+    html += `
+
+      <div class="product ${done ? "done" : ""}">
+
+        <div class="product-top">
+
+          <div class="product-name">
+
+            ${getIcon(product.name)}
+            ${product.name}
+
+          </div>
+
+          ${
+            done
+            ?
+            `
+            <div class="done-badge">
+              ✅ TAYYOR
+            </div>
+            `
+            :
+            ""
+          }
+
+        </div>
+
+
+        <div class="quantities">
+
+          <div class="quantity">
+
+            <div class="quantity-title">
+              TAYYORLASH KERAK
+            </div>
+
+            <div class="quantity-number">
+              ${product.required}
+            </div>
+
+          </div>
+
+
+          <div class="quantity">
+
+            <div class="quantity-title">
+              TAYYORLANDI
+            </div>
+
+            <div class="quantity-number">
+              ${prepared}
+            </div>
+
+          </div>
+
+
+          <div class="quantity">
+
+            <div class="quantity-title">
+              QOLDI
+            </div>
+
+            <div class="quantity-number remaining">
+              ${remaining}
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="controls">
+
+          <button
+            class="control minus"
+            onclick="changePrepared(${index},-1)"
+          >
+            −1
+          </button>
+
+
+          <button
+            class="control plus"
+            onclick="changePrepared(${index},1)"
+          >
+            +1
+          </button>
+
+
+          <button
+            class="control plus"
+            onclick="changePrepared(${index},5)"
+          >
+            +5
+          </button>
+
+
+          <button
+            class="control plus"
+            onclick="changePrepared(${index},10)"
+          >
+            +10
+          </button>
+
+        </div>
+
+
+        <button
+          class="complete"
+          ${done ? "disabled" : ""}
+          onclick="completeProduct(${index})"
+        >
+
+          ${
+            done
+            ? "✅ Tayyor"
+            : "✅ Mahsulot tayyor"
+          }
+
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+
+  box.innerHTML =
+    html;
+
+
+  updateSummary(products);
+
+}
+
+
+/* =========================
+   SUPABASE GA SAQLASH
+========================= */
+
+async function savePrepared(product){
+
+  try{
+
+    const response =
+      await fetch(
+
+        SUPABASE_URL +
+        "/rest/v1/kitchen_items" +
+        "?on_conflict=product_name,production_date",
+
+        {
+
+          method:"POST",
+
+          headers:{
+
+            apikey:SUPABASE_KEY,
+
+            Authorization:
+              "Bearer "+SUPABASE_KEY,
+
+            "Content-Type":
+              "application/json",
+
+            Prefer:
+              "resolution=merge-duplicates,return=minimal"
+
+          },
+
+          body:JSON.stringify({
+
+            product_name:
+              product.name,
+
+            required_quantity:
+              product.required,
+
+            prepared_quantity:
+              product.prepared,
+
+            production_date:
+              today(),
+
+            updated_at:
+              new Date().toISOString()
+
+          })
+
+        }
+
+      );
+
+
+    if(!response.ok){
+
+      const error =
+        await response.text();
+
+
+      console.log(
+        "Kitchen save error:",
+        error
+      );
+
+
+      showToast(
+        "❌ Saqlashda xatolik"
+      );
+
+
+      return false;
+
+    }
+
+
+    return true;
+
+
+  }catch(error){
+
+    console.log(error);
+
+    showToast(
+      "❌ Internet xatosi"
+    );
+
+    return false;
+
+  }
+
+}
+
+
+/* =========================
+   MIQDORNI O'ZGARTIRISH
+========================= */
+
+async function changePrepared(index,amount){
+
+  const products =
+    Object.values(kitchenData);
+
+
+  const product =
+    products[index];
+
+
+  if(!product)
+    return;
+
+
+  let next =
+    Number(
+      product.prepared || 0
+    ) +
+    amount;
+
+
+  if(next < 0)
+    next = 0;
+
+
+  if(next > product.required)
+    next = product.required;
+
+
+  product.prepared =
+    next;
+
+
+  renderKitchen();
+
+
+  const saved =
+    await savePrepared(product);
+
+
+  if(saved){
+
+    showToast(
+      "✅ " +
+      product.name +
+      ": " +
+      next +
+      " dona tayyor"
+    );
+
+
+    await checkAllReady();
+
+  }
+
+}
+
+
+/* =========================
+   MAHSULOTNI TO'LIQ TAYYORLASH
+========================= */
+
+async function completeProduct(index){
+
+  const products =
+    Object.values(kitchenData);
+
+
+  const product =
+    products[index];
+
+
+  if(!product)
+    return;
+
+
+  product.prepared =
+    product.required;
+
+
+  renderKitchen();
+
+
+  const saved =
+    await savePrepared(product);
+
+
+  if(saved){
+
+    showToast(
+      "✅ " +
+      product.name +
+      " tayyor!"
+    );
+
+
+    await checkAllReady();
+
+  }
+
+}
+
+
+/* =========================
+   BARCHASI TAYYOR BO'LGANDA
+   ORDER -> READY
+========================= */
+
+async function checkAllReady(){
+
+  const products =
+    Object.values(kitchenData);
+
+
+  if(!products.length)
+    return;
+
+
+  const allReady =
+    products.every(product =>
+
+      Number(
+        product.prepared || 0
+      ) >=
+      Number(
+        product.required || 0
+      )
+
+    );
+
+
+  if(!allReady)
+    return;
+
+
+  if(!currentOrders.length)
+    return;
+
+
+  showToast(
+    "🎉 Barcha mahsulotlar tayyor!"
+  );
+
+
+  let successCount = 0;
+
+
+  for(const order of currentOrders){
+
+    try{
+
+      const response =
+        await fetch(
+
+          SUPABASE_URL +
+          "/rest/v1/orders?id=eq."+order.id,
+
+          {
+
+            method:"PATCH",
+
+            headers:{
+
+              apikey:SUPABASE_KEY,
+
+              Authorization:
+                "Bearer "+SUPABASE_KEY,
+
+              "Content-Type":
+                "application/json",
+
+              Prefer:
+                "return=minimal"
+
+            },
+
+            body:JSON.stringify({
+
+              status:"ready"
+
+            })
+
+          }
+
+        );
+
+
+      if(response.ok){
+
+        successCount++;
+
+      }else{
+
+        console.log(
+          "Order ready error:",
+          await response.text()
+        );
+
+      }
+
+    }catch(error){
+
+      console.log(
+        "Order status error:",
+        error
+      );
+
+    }
+
+  }
+
+
+  if(successCount > 0){
+
+    setTimeout(
+      loadKitchen,
+      1000
+    );
+
+  }
+
+}
+
+
+/* =========================
+   UMUMIY FOIZ
+========================= */
+
+function updateSummary(products){
+
+  let totalRequired =
+    0;
+
+
+  let totalPrepared =
+    0;
+
+
+  products.forEach(product=>{
+
+    totalRequired +=
+      Number(
+        product.required || 0
+      );
+
+
+    totalPrepared +=
+      Math.min(
+
+        Number(
+          product.prepared || 0
+        ),
+
+        Number(
+          product.required || 0
+        )
+
+      );
+
+  });
+
+
+  const percent =
+    totalRequired > 0
+    ?
+    Math.round(
+      totalPrepared /
+      totalRequired *
+      100
+    )
+    :
+    0;
+
+
+  document.getElementById(
+    "overallPercent"
+  ).textContent =
+    percent + "%";
+
+
+  document.getElementById(
+    "overallText"
+  ).textContent =
+    totalPrepared +
+    " / " +
+    totalRequired;
+
+
+  document.getElementById(
+    "progressBar"
+  ).style.width =
+    percent + "%";
+
+
+  if(
+    totalRequired > 0 &&
+    totalPrepared >= totalRequired
+  ){
+
+    document.getElementById(
+      "allDone"
+    ).style.display =
+      "block";
+
+  }else{
+
+    document.getElementById(
+      "allDone"
+    ).style.display =
+      "none";
+
+  }
+
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+function showToast(text){
+
+  const toast =
+    document.getElementById("toast");
+
+
+  toast.textContent =
+    text;
+
+
+  toast.style.display =
+    "block";
+
+
+  setTimeout(()=>{
+
+    toast.style.display =
+      "none";
+
+  },2500);
+
+}
+
+
+/* =========================
+   BOSHLASH
+========================= */
+
+loadKitchen();
+
+
+setInterval(
+  loadKitchen,
+  15000
+);
+
+</script>
+
+
 </body>
+
 </html>
