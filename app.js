@@ -84,7 +84,8 @@ async function loadMenu() {
 }
 
 function renderCategories() {
-  const categoriesEl = document.getElementById("categories");
+  const categoriesEl =
+    document.getElementById("categories");
 
   const categories = [
     "Barchasi",
@@ -98,10 +99,12 @@ function renderCategories() {
   categoriesEl.innerHTML = "";
 
   categories.forEach(category => {
-    const button = document.createElement("button");
+    const button =
+      document.createElement("button");
 
     button.className =
-      "cat" + (category === currentCat ? " active" : "");
+      "cat" +
+      (category === currentCat ? " active" : "");
 
     button.textContent = category;
 
@@ -122,16 +125,22 @@ function renderCategories() {
 }
 
 function money(number) {
-  return Number(number).toLocaleString("uz-UZ") + " so'm";
+  return (
+    Number(number).toLocaleString("uz-UZ") +
+    " so'm"
+  );
 }
 
 function renderMenu() {
   const search =
-    document.getElementById("searchInput").value
+    document
+      .getElementById("searchInput")
+      .value
       .toLowerCase()
       .trim();
 
   const filtered = menuItems.filter(item => {
+
     const categoryOk =
       currentCat === "Barchasi" ||
       item.category === currentCat;
@@ -146,15 +155,25 @@ function renderMenu() {
   document.getElementById("menu").innerHTML =
     filtered
       .map(item => {
-        const inCart = cart.find(x => x.id === item.id);
-        const quantity = inCart ? inCart.qty : 0;
+
+        const inCart =
+          cart.find(x => x.id === item.id);
+
+        const quantity =
+          inCart ? inCart.qty : 0;
 
         return `
           <div class="item">
-            <div class="emoji">🍽️</div>
+
+            <div class="emoji">
+              🍽️
+            </div>
 
             <div class="info">
-              <h3>${item.name}</h3>
+
+              <h3>
+                ${item.name}
+              </h3>
 
               <p>
                 ${item.category || ""}
@@ -167,6 +186,7 @@ function renderMenu() {
               <small>
                 Qoldiq: ${item.stock}
               </small>
+
             </div>
 
             <button
@@ -176,6 +196,7 @@ function renderMenu() {
             >
               ${quantity > 0 ? quantity : "+"}
             </button>
+
           </div>
         `;
       })
@@ -185,17 +206,23 @@ function renderMenu() {
 document.getElementById("searchInput").oninput =
   renderMenu;
 
-window.addToCart = function (id) {
-  const item = menuItems.find(x => x.id === id);
+window.addToCart = function(id) {
+
+  const item =
+    menuItems.find(x => x.id === id);
 
   if (!item) return;
 
-  const existing = cart.find(x => x.id === id);
+  const existing =
+    cart.find(x => x.id === id);
 
-  const currentQty = existing ? existing.qty : 0;
+  const currentQty =
+    existing ? existing.qty : 0;
 
   if (currentQty >= item.stock) {
-    alert("Bu mahsulotning qoldig‘i yetarli emas.");
+    alert(
+      "Bu mahsulotning qoldig‘i yetarli emas."
+    );
     return;
   }
 
@@ -211,11 +238,17 @@ window.addToCart = function (id) {
   updateCart();
   renderMenu();
 
-  tg?.HapticFeedback?.impactOccurred("light");
+  tg?.HapticFeedback
+    ?.impactOccurred("light");
 };
 
-window.changeQty = function (id, difference) {
-  const item = cart.find(x => x.id === id);
+window.changeQty = function(
+  id,
+  difference
+) {
+
+  const item =
+    cart.find(x => x.id === id);
 
   if (!item) return;
 
@@ -223,14 +256,17 @@ window.changeQty = function (id, difference) {
     difference > 0 &&
     item.qty >= item.stock
   ) {
-    alert("Bu mahsulotning qoldig‘i yetarli emas.");
+    alert(
+      "Bu mahsulotning qoldig‘i yetarli emas."
+    );
     return;
   }
 
   item.qty += difference;
 
   if (item.qty <= 0) {
-    cart = cart.filter(x => x.id !== id);
+    cart =
+      cart.filter(x => x.id !== id);
   }
 
   updateCart();
@@ -238,39 +274,63 @@ window.changeQty = function (id, difference) {
 };
 
 function updateCart() {
-  const count = cart.reduce(
-    (sum, item) => sum + item.qty,
-    0
-  );
 
-  const total = cart.reduce(
-    (sum, item) => sum + item.qty * Number(item.price),
-    0
-  );
+  const count =
+    cart.reduce(
+      (sum, item) =>
+        sum + item.qty,
+      0
+    );
 
-  document.getElementById("cartCount").textContent =
-    count;
+  const total =
+    cart.reduce(
+      (sum, item) =>
+        sum +
+        item.qty *
+        Number(item.price),
+      0
+    );
 
-  document.getElementById("cartTotal").textContent =
-    money(total);
+  document.getElementById(
+    "cartCount"
+  ).textContent = count;
 
-  document.getElementById("checkoutTotal").textContent =
-    money(total);
+  document.getElementById(
+    "cartTotal"
+  ).textContent = money(total);
 
-  document.getElementById("cartButton")
-    .classList.toggle("hidden", count === 0);
+  document.getElementById(
+    "checkoutTotal"
+  ).textContent = money(total);
 
-  document.getElementById("cartItems").innerHTML =
+  document.getElementById(
+    "cartButton"
+  )
+    .classList
+    .toggle(
+      "hidden",
+      count === 0
+    );
+
+  document.getElementById(
+    "cartItems"
+  ).innerHTML =
     cart
       .map(item => `
         <div class="cart-row">
 
           <div class="grow">
-            <strong>${item.name}</strong>
+
+            <strong>
+              ${item.name}
+            </strong>
+
             <br>
+
             <small>
               ${money(item.price)}
             </small>
+
           </div>
 
           <div class="qty">
@@ -298,152 +358,239 @@ function updateCart() {
       .join("");
 }
 
-document.getElementById("cartButton").onclick =
-  () => {
+document.getElementById(
+  "cartButton"
+).onclick = () => {
+
+  document
+    .getElementById("cartModal")
+    .classList
+    .remove("hidden");
+};
+
+document.getElementById(
+  "closeCart"
+).onclick = () => {
+
+  document
+    .getElementById("cartModal")
+    .classList
+    .add("hidden");
+};
+
+document.getElementById(
+  "doneButton"
+).onclick = () => {
+
+  document
+    .getElementById("successModal")
+    .classList
+    .add("hidden");
+};
+
+
+/* =========================
+   BUYURTMA YUBORISH
+   ========================= */
+
+document.getElementById(
+  "orderButton"
+).onclick = async () => {
+
+  if (!cart.length) {
+    alert("Savat bo‘sh.");
+    return;
+  }
+
+  const phone =
     document
-      .getElementById("cartModal")
-      .classList.remove("hidden");
-  };
+      .getElementById("phone")
+      .value
+      .trim();
 
-document.getElementById("closeCart").onclick =
-  () => {
+  if (!phone) {
+
+    alert(
+      "Telefon raqamingizni kiriting."
+    );
+
     document
-      .getElementById("cartModal")
-      .classList.add("hidden");
-  };
+      .getElementById("phone")
+      .focus();
 
-document.getElementById("doneButton").onclick =
-  () => {
-    document
-      .getElementById("successModal")
-      .classList.add("hidden");
-  };
+    return;
+  }
 
-document.getElementById("orderButton").onclick =
-  async () => {
+  if (!currentShop) {
 
-    if (!cart.length) {
-      alert("Savat bo‘sh.");
-      return;
-    }
+    alert(
+      "Do‘kon ma’lumotlari topilmadi."
+    );
 
-    const phone =
-      document.getElementById("phone")
-        .value
-        .trim();
+    return;
+  }
 
-    if (!phone) {
-      document.getElementById("phone").focus();
-
-      alert("Telefon raqamingizni kiriting.");
-
-      return;
-    }
-
-    if (!currentShop) {
-      alert("Do‘kon ma’lumotlari topilmadi.");
-      return;
-    }
-
-    const total = cart.reduce(
+  const total =
+    cart.reduce(
       (sum, item) =>
-        sum + item.qty * Number(item.price),
+        sum +
+        item.qty *
+        Number(item.price),
       0
     );
 
-    const customerName =
-      tg?.initDataUnsafe?.user?.first_name || "";
+  const customerName =
+    tg?.initDataUnsafe?.user?.first_name ||
+    "";
 
-    const note =
-      document.getElementById("note")
-        .value
-        .trim();
+  const note =
+    document
+      .getElementById("note")
+      .value
+      .trim();
 
-    const orderData = {
-      shop_code: currentShop.shop_code,
-      customer_name: customerName,
-      phone: phone,
-      items: cart.map(item => ({
+  const orderData = {
+
+    shop_code:
+      currentShop.shop_code,
+
+    customer_name:
+      customerName,
+
+    phone:
+      phone,
+
+    items:
+      cart.map(item => ({
         id: item.id,
         name: item.name,
         price: Number(item.price),
         quantity: item.qty
       })),
-      total: total,
-      status: "new",
-      note: note
-    };
 
-    try {
+    total:
+      total,
 
-      const response = await fetch(
+    status:
+      "new",
+
+    note:
+      note
+  };
+
+  console.log(
+    "Yuborilayotgan buyurtma:",
+    orderData
+  );
+
+  try {
+
+    const response =
+      await fetch(
         `${SUPABASE_URL}/rest/v1/orders`,
         {
           method: "POST",
 
           headers: {
-            ...headers,
-            Prefer: "return=representation"
+            apikey:
+              SUPABASE_KEY,
+
+            Authorization:
+              `Bearer ${SUPABASE_KEY}`,
+
+            "Content-Type":
+              "application/json",
+
+            Prefer:
+              "return=representation"
           },
 
-          body: JSON.stringify(orderData)
+          body:
+            JSON.stringify(orderData)
         }
       );
 
-      if (!response.ok) {
+    const responseText =
+      await response.text();
 
-        const errorText =
-          await response.text();
+    console.log(
+      "Supabase javobi:",
+      response.status,
+      responseText
+    );
 
-        console.error(errorText);
-
-        alert(
-          "Xatolik: " + errorText
-        );
-
-        return;
-      }
-
-      const createdOrders =
-        await response.json();
-
-      const createdOrder =
-        createdOrders[0];
-
-      const orderNumber =
-        createdOrder?.order_number || "ORD";
-
-      document.getElementById("orderNumber")
-        .textContent =
-        `Buyurtma № ${orderNumber}`;
-
-      document
-        .getElementById("cartModal")
-        .classList.add("hidden");
-
-      document
-        .getElementById("successModal")
-        .classList.remove("hidden");
-
-      cart = [];
-
-      updateCart();
-      renderMenu();
-
-      tg?.HapticFeedback
-        ?.notificationOccurred("success");
-
-    } catch (error) {
-
-      console.error(error);
+    if (!response.ok) {
 
       alert(
-        "Internet yoki server bilan bog‘lanishda xatolik."
+        "BUYURTMA XATOSI:\n\n" +
+        responseText
       );
+
+      return;
     }
-  };
+
+    let createdOrders = [];
+
+    try {
+      createdOrders =
+        JSON.parse(responseText);
+    } catch (e) {
+      createdOrders = [];
+    }
+
+    const createdOrder =
+      createdOrders[0];
+
+    const orderNumber =
+      createdOrder?.order_number ||
+      "Qabul qilindi";
+
+    document.getElementById(
+      "orderNumber"
+    ).textContent =
+      `Buyurtma № ${orderNumber}`;
+
+    document
+      .getElementById("cartModal")
+      .classList
+      .add("hidden");
+
+    document
+      .getElementById("successModal")
+      .classList
+      .remove("hidden");
+
+    cart = [];
+
+    updateCart();
+    renderMenu();
+
+    tg?.HapticFeedback
+      ?.notificationOccurred(
+        "success"
+      );
+
+  } catch (error) {
+
+    console.error(
+      "ORDER ERROR:",
+      error
+    );
+
+    alert(
+      "Internet yoki server bilan bog‘lanishda xatolik:\n\n" +
+      error.message
+    );
+  }
+};
+
+
+/* =========================
+   APPNI ISHGA TUSHIRISH
+   ========================= */
 
 async function startApp() {
+
   try {
 
     await loadShop();
@@ -454,14 +601,18 @@ async function startApp() {
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
 
-    document.getElementById("shopName")
-      .textContent =
+    document.getElementById(
+      "shopName"
+    ).textContent =
       "Ma’lumot yuklanmadi";
 
     alert(
-      "RastaGo ma’lumotlarini yuklashda xatolik yuz berdi."
+      "RastaGo ma’lumotlarini yuklashda xatolik:\n\n" +
+      error.message
     );
   }
 }
