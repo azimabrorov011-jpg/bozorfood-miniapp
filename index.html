@@ -361,8 +361,6 @@ let kitchenData = {};
 
 let currentOrders = [];
 
-let previousPrepared = {};
-
 
 const productIcons = {
 
@@ -391,18 +389,28 @@ function getIcon(name){
 }
 
 
+/* =========================================
+   O'ZBEKISTON VAQTI BO'YICHA BUGUNGI SANA
+========================================= */
+
 function today(){
 
-  return new Date()
-    .toISOString()
-    .slice(0,10);
+  return new Intl.DateTimeFormat(
+    "en-CA",
+    {
+      timeZone:"Asia/Tashkent",
+      year:"numeric",
+      month:"2-digit",
+      day:"2-digit"
+    }
+  ).format(new Date());
 
 }
 
 
-/* =========================
-   YANGI BUYURTMALARNI OLISH
-========================= */
+/* =========================================
+   BUYURTMALARNI OLISH
+========================================= */
 
 async function loadKitchen(){
 
@@ -466,9 +474,9 @@ async function loadKitchen(){
 }
 
 
-/* =========================
-   MAHSULOTLARNI YIG‘ISH
-========================= */
+/* =========================================
+   BUYURTMALARDAGI MAHSULOTLARNI YIG'ISH
+========================================= */
 
 async function buildKitchen(orders){
 
@@ -534,10 +542,9 @@ async function buildKitchen(orders){
 }
 
 
-/* =========================
-   KITCHEN_ITEMS DAN
-   TAYYOR MIQDORNI OLISH
-========================= */
+/* =========================================
+   BUGUNGI KITCHEN MA'LUMOTINI OLISH
+========================================= */
 
 async function loadPrepared(){
 
@@ -549,12 +556,23 @@ async function loadPrepared(){
     return;
 
 
+  const filter =
+    products
+      .map(x =>
+        `"${String(x.name).replace(/"/g,'\\"')}"`
+      )
+      .join(",");
+
+
   const response = await fetch(
 
     SUPABASE_URL +
     "/rest/v1/kitchen_items" +
     "?select=product_name,prepared_quantity" +
-    "&production_date=eq."+today(),
+    "&production_date=eq."+today() +
+    "&product_name=in.(" +
+    encodeURIComponent(filter) +
+    ")",
 
     {
       headers:{
@@ -581,21 +599,6 @@ async function loadPrepared(){
     await response.json();
 
 
-  /*
-    MUHIM:
-
-    kitchen_items dagi prepared_quantity
-    kunlik tayyorlangan jami mahsulot.
-
-    Lekin yangi order kelganda uni
-    avtomatik "tayyor" qilib yubormaslik kerak.
-
-    Shuning uchun mavjud tayyor miqdorni
-    faqat real umumiy talabga nisbatan
-    hisoblaymiz.
-  */
-
-
   data.forEach(row=>{
 
     const key =
@@ -615,13 +618,12 @@ async function loadPrepared(){
 
   });
 
-
 }
 
 
-/* =========================
-   EKRANGA CHIQARISH
-========================= */
+/* =========================================
+   KITCHENNI EKRANGA CHIQARISH
+========================================= */
 
 function renderKitchen(){
 
@@ -674,20 +676,14 @@ function renderKitchen(){
 
     /*
       Tayyorlangan miqdor hech qachon
-      kerakli miqdordan katta ko‘rsatilmaydi.
+      shu paytdagi talabdan oshib
+      ko'rsatilmaydi.
     */
 
     const prepared =
       Math.min(
-
-        Number(
-          product.prepared || 0
-        ),
-
-        Number(
-          product.required || 0
-        )
-
+        Number(product.prepared || 0),
+        Number(product.required || 0)
       );
 
 
@@ -697,12 +693,9 @@ function renderKitchen(){
 
     const remaining =
       Math.max(
-
         Number(product.required || 0) -
         prepared,
-
         0
-
       );
 
 
@@ -847,9 +840,9 @@ function renderKitchen(){
 }
 
 
-/* =========================
-   SUPABASE GA SAQLASH
-========================= */
+/* =========================================
+   KITCHEN_ITEMS GA SAQLASH
+========================================= */
 
 async function savePrepared(product){
 
@@ -863,7 +856,6 @@ async function savePrepared(product){
         "?on_conflict=product_name,production_date",
 
         {
-
           method:"POST",
 
           headers:{
@@ -945,9 +937,9 @@ async function savePrepared(product){
 }
 
 
-/* =========================
-   MIQDORNI O'ZGARTIRISH
-========================= */
+/* =========================================
+   TAYYOR MIQDORNI O'ZGARTIRISH
+========================================= */
 
 async function changePrepared(index,amount){
 
@@ -964,9 +956,7 @@ async function changePrepared(index,amount){
 
 
   let next =
-    Number(
-      product.prepared || 0
-    ) +
+    Number(product.prepared || 0) +
     amount;
 
 
@@ -1007,9 +997,9 @@ async function changePrepared(index,amount){
 }
 
 
-/* =========================
+/* =========================================
    MAHSULOTNI TO'LIQ TAYYORLASH
-========================= */
+========================================= */
 
 async function completeProduct(index){
 
@@ -1052,10 +1042,10 @@ async function completeProduct(index){
 }
 
 
-/* =========================
-   BARCHASI TAYYOR BO'LGANDA
+/* =========================================
+   BARCHA MAHSULOT TAYYOR BO'LSA
    ORDER -> READY
-========================= */
+========================================= */
 
 async function checkAllReady(){
 
@@ -1070,12 +1060,8 @@ async function checkAllReady(){
   const allReady =
     products.every(product =>
 
-      Number(
-        product.prepared || 0
-      ) >=
-      Number(
-        product.required || 0
-      )
+      Number(product.prepared || 0) >=
+      Number(product.required || 0)
 
     );
 
@@ -1173,9 +1159,9 @@ async function checkAllReady(){
 }
 
 
-/* =========================
+/* =========================================
    UMUMIY FOIZ
-========================= */
+========================================= */
 
 function updateSummary(products){
 
@@ -1265,9 +1251,9 @@ function updateSummary(products){
 }
 
 
-/* =========================
-   TOAST
-========================= */
+/* =========================================
+   XABAR
+========================================= */
 
 function showToast(text){
 
@@ -1293,9 +1279,9 @@ function showToast(text){
 }
 
 
-/* =========================
+/* =========================================
    BOSHLASH
-========================= */
+========================================= */
 
 loadKitchen();
 
