@@ -2,194 +2,238 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>RastaGo Admin</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
+
 body{
   margin:0;
   font-family:Arial,sans-serif;
   background:#f3f4f6;
-  color:#111827
+  color:#111827;
 }
+
 header{
   background:#111827;
   color:white;
-  padding:16px;
+  padding:15px;
   position:sticky;
   top:0;
-  z-index:20
+  z-index:100;
 }
+
 .header{
   max-width:1100px;
   margin:auto;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:10px
+  gap:10px;
 }
+
 .logo{
-  font-size:22px;
-  font-weight:bold
+  font-size:21px;
+  font-weight:bold;
 }
-.header-right{
+
+.header-buttons{
   display:flex;
-  gap:8px
+  gap:8px;
 }
-button{
+
+.header-buttons button{
   border:0;
-  cursor:pointer;
-  font-weight:bold
-}
-.refresh,.sound{
   padding:10px 13px;
   border-radius:9px;
-  background:white;
-  color:#111827
+  font-weight:bold;
+  cursor:pointer;
 }
+
+.sound{
+  background:white;
+  color:#111827;
+}
+
+.refresh{
+  background:#2563eb;
+  color:white;
+}
+
 .container{
   max-width:1100px;
   margin:auto;
-  padding:16px
+  padding:15px;
 }
+
 .stats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:10px;
-  margin-bottom:16px
+  margin-bottom:15px;
 }
+
 .stat{
   background:white;
-  padding:15px;
   border-radius:14px;
-  box-shadow:0 2px 8px rgba(0,0,0,.06)
+  padding:15px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
 }
+
 .stat-title{
   color:#6b7280;
-  font-size:13px
+  font-size:13px;
 }
+
 .stat-value{
-  font-size:25px;
+  font-size:24px;
   font-weight:bold;
-  margin-top:5px
+  margin-top:5px;
 }
+
 .filters{
   display:flex;
   gap:8px;
   overflow-x:auto;
-  padding-bottom:8px;
-  margin-bottom:12px
+  margin-bottom:15px;
+  padding-bottom:5px;
 }
+
 .filter{
   white-space:nowrap;
+  border:0;
+  background:white;
   padding:10px 13px;
   border-radius:9px;
-  background:white
+  cursor:pointer;
+  font-weight:bold;
 }
+
 .filter.active{
   background:#111827;
-  color:white
+  color:white;
 }
-.new-alert{
+
+.alert{
   display:none;
   background:#dc2626;
   color:white;
   padding:13px;
   border-radius:12px;
-  margin-bottom:14px;
   text-align:center;
   font-weight:bold;
-  animation:pulse 1s infinite
+  margin-bottom:15px;
+  animation:pulse 1s infinite;
 }
+
 @keyframes pulse{
-  50%{opacity:.55}
+  50%{
+    opacity:.55;
+  }
 }
+
 .order{
   background:white;
   border-radius:16px;
   padding:16px;
   margin-bottom:13px;
-  box-shadow:0 3px 12px rgba(0,0,0,.07)
+  box-shadow:0 3px 12px rgba(0,0,0,.07);
 }
+
 .order.new{
-  border:2px solid #dc2626
+  border:2px solid #dc2626;
 }
-.top{
+
+.order-top{
   display:flex;
   justify-content:space-between;
-  gap:10px
+  gap:10px;
 }
-.number{
+
+.order-number{
   font-size:21px;
-  font-weight:bold
+  font-weight:bold;
 }
+
 .time{
   color:#6b7280;
   font-size:12px;
-  margin-top:4px
+  margin-top:4px;
 }
+
 .badge{
   height:max-content;
   padding:7px 10px;
   border-radius:9px;
   background:#eef2f7;
   font-size:12px;
-  font-weight:bold
+  font-weight:bold;
 }
+
 .customer{
   margin-top:13px;
   background:#f8fafc;
   padding:12px;
   border-radius:11px;
-  line-height:1.8
+  line-height:1.8;
 }
+
 .items{
   margin-top:13px;
+  padding:10px 0;
   border-top:1px solid #eee;
   border-bottom:1px solid #eee;
-  padding:10px 0
 }
+
 .item{
   display:flex;
   justify-content:space-between;
+  gap:10px;
   padding:6px 0;
-  gap:10px
 }
+
 .note{
   margin-top:12px;
   background:#fff7ed;
   color:#9a3412;
   padding:11px;
-  border-radius:10px
+  border-radius:10px;
 }
+
 .total{
   display:flex;
   justify-content:space-between;
   margin-top:13px;
   font-size:18px;
-  font-weight:bold
+  font-weight:bold;
 }
+
 .actions{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:8px;
-  margin-top:14px
+  margin-top:14px;
 }
+
 .action{
+  border:0;
   padding:12px;
   border-radius:10px;
-  background:#eef2f7
+  background:#eef2f7;
+  font-weight:bold;
+  cursor:pointer;
 }
-.action:hover{
-  opacity:.8
-}
-.empty,.loading{
+
+.empty{
   text-align:center;
   padding:45px 15px;
-  color:#6b7280
+  color:#6b7280;
 }
+
 .toast{
   position:fixed;
   left:50%;
@@ -200,121 +244,138 @@ button{
   padding:13px 18px;
   border-radius:12px;
   display:none;
-  z-index:50;
-  box-shadow:0 5px 20px rgba(0,0,0,.25)
+  z-index:999;
 }
+
 @media(max-width:650px){
+
   .stats{
-    grid-template-columns:repeat(2,1fr)
+    grid-template-columns:repeat(2,1fr);
   }
-  .top{
-    flex-direction:column
+
+  .order-top{
+    flex-direction:column;
   }
+
   .actions{
-    grid-template-columns:1fr
+    grid-template-columns:1fr;
+  }
+
+  .logo{
+    font-size:17px;
+  }
+
+  .header-buttons button{
+    padding:9px 10px;
   }
 }
 </style>
+
 </head>
 
 <body>
 
 <header>
-  <div class="header">
 
-    <div class="logo">
-      🍽 RastaGo Admin
-    </div>
+<div class="header">
 
-    <div class="header-right">
-      <button class="sound" onclick="enableSound()">
-        🔔 Ovoz
-      </button>
+<div class="logo">
+🍽 RastaGo Admin
+</div>
 
-      <button class="refresh" onclick="manualRefresh()">
-        🔄
-      </button>
-    </div>
+<div class="header-buttons">
 
-  </div>
-</header>
+<button class="sound" onclick="enableSound()">
+🔔 Ovoz
+</button>
 
-<div class="container">
-
-  <div id="newAlert" class="new-alert">
-    🔔 YANGI BUYURTMA KELDI!
-  </div>
-
-  <div class="stats">
-
-    <div class="stat">
-      <div class="stat-title">Bugun</div>
-      <div id="todayCount" class="stat-value">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-title">Yangi</div>
-      <div id="newCount" class="stat-value">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-title">Tayyorlanmoqda</div>
-      <div id="cookingCount" class="stat-value">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-title">Bugungi savdo</div>
-      <div id="revenue" class="stat-value">0</div>
-    </div>
-
-  </div>
-
-  <div class="filters">
-
-    <button class="filter active"
-      onclick="setFilter('all',this)">
-      Barchasi
-    </button>
-
-    <button class="filter"
-      onclick="setFilter('new',this)">
-      🆕 Yangi
-    </button>
-
-    <button class="filter"
-      onclick="setFilter('preparing',this)">
-      👨‍🍳 Tayyorlanmoqda
-    </button>
-
-    <button class="filter"
-      onclick="setFilter('ready',this)">
-      ✅ Tayyor
-    </button>
-
-    <button class="filter"
-      onclick="setFilter('courier',this)">
-      🛵 Kuryerda
-    </button>
-
-    <button class="filter"
-      onclick="setFilter('delivered',this)">
-      📦 Yetkazildi
-    </button>
-
-    <button class="filter"
-      onclick="setFilter('cancelled',this)">
-      ❌ Bekor
-    </button>
-
-  </div>
-
-  <div id="orders" class="loading">
-    Buyurtmalar yuklanmoqda...
-  </div>
+<button class="refresh" onclick="manualRefresh()">
+🔄
+</button>
 
 </div>
 
+</div>
+
+</header>
+
+
+<div class="container">
+
+<div id="alert" class="alert">
+🔔 YANGI BUYURTMA KELDI!
+</div>
+
+
+<div class="stats">
+
+<div class="stat">
+<div class="stat-title">Bugun</div>
+<div id="todayCount" class="stat-value">0</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">Yangi</div>
+<div id="newCount" class="stat-value">0</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">Tayyorlanmoqda</div>
+<div id="preparingCount" class="stat-value">0</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">Bugungi savdo</div>
+<div id="revenue" class="stat-value">0</div>
+</div>
+
+</div>
+
+
+<div class="filters">
+
+<button class="filter active" onclick="setFilter('all',this)">
+Barchasi
+</button>
+
+<button class="filter" onclick="setFilter('new',this)">
+🆕 Yangi
+</button>
+
+<button class="filter" onclick="setFilter('preparing',this)">
+👨‍🍳 Tayyorlanmoqda
+</button>
+
+<button class="filter" onclick="setFilter('ready',this)">
+✅ Tayyor
+</button>
+
+<button class="filter" onclick="setFilter('courier',this)">
+🛵 Kuryerda
+</button>
+
+<button class="filter" onclick="setFilter('delivered',this)">
+📦 Yetkazildi
+</button>
+
+<button class="filter" onclick="setFilter('cancelled',this)">
+❌ Bekor
+</button>
+
+</div>
+
+
+<div id="orders">
+<div class="empty">
+Buyurtmalar yuklanmoqda...
+</div>
+</div>
+
+</div>
+
+
 <div id="toast" class="toast"></div>
+
 
 <script>
 
@@ -324,501 +385,700 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_KBodwmECQvN46zDKjOwfhg_fet6nBiy";
 
-let orders=[];
-let filter="all";
-let firstLoad=true;
-let knownIds=new Set();
-let soundEnabled=false;
 
-const statusNames={
-  new:"🆕 Yangi",
-  preparing:"👨‍🍳 Tayyorlanmoqda",
-  ready:"✅ Tayyor",
-  courier:"🛵 Kuryerda",
-  delivered:"📦 Yetkazildi",
-  cancelled:"❌ Bekor qilingan"
+let orders = [];
+let filter = "all";
+let firstLoad = true;
+let knownIds = new Set();
+let soundEnabled = false;
+
+
+const statusNames = {
+
+new:"🆕 Yangi",
+
+preparing:"👨‍🍳 Tayyorlanmoqda",
+
+ready:"✅ Tayyor",
+
+courier:"🛵 Kuryerda",
+
+delivered:"📦 Yetkazildi",
+
+cancelled:"❌ Bekor qilingan"
+
 };
 
-function money(n){
-  return Number(n||0).toLocaleString("uz-UZ")+" so'm";
+
+function money(number){
+
+return Number(number || 0)
+.toLocaleString("uz-UZ")+" so'm";
+
 }
 
-function dateText(v){
-  if(!v)return "-";
 
-  return new Date(v).toLocaleString("uz-UZ",{
-    day:"2-digit",
-    month:"2-digit",
-    hour:"2-digit",
-    minute:"2-digit"
-  });
+function dateText(value){
+
+if(!value) return "-";
+
+return new Date(value).toLocaleString(
+"uz-UZ",
+{
+day:"2-digit",
+month:"2-digit",
+hour:"2-digit",
+minute:"2-digit"
 }
+);
+
+}
+
 
 function enableSound(){
 
-  soundEnabled=true;
+soundEnabled = true;
 
-  showToast("🔔 Ovozli bildirishnoma yoqildi");
+showToast("🔔 Ovoz yoqildi");
 
-  try{
-    const ctx=new AudioContext();
-    ctx.resume();
-  }catch(e){}
+try{
+
+const audio =
+new (window.AudioContext ||
+window.webkitAudioContext)();
+
+const oscillator =
+audio.createOscillator();
+
+const gain =
+audio.createGain();
+
+oscillator.connect(gain);
+
+gain.connect(audio.destination);
+
+oscillator.frequency.value = 700;
+
+gain.gain.value = 0.2;
+
+oscillator.start();
+
+oscillator.stop(
+audio.currentTime + 0.15
+);
+
+}catch(error){
+
+console.log(error);
 
 }
+
+}
+
 
 function playSound(){
 
-  if(!soundEnabled)return;
+if(!soundEnabled) return;
 
-  try{
+try{
 
-    const ctx=new AudioContext();
+const audio =
+new (window.AudioContext ||
+window.webkitAudioContext)();
 
-    const osc=ctx.createOscillator();
-    const gain=ctx.createGain();
+const oscillator =
+audio.createOscillator();
 
-    osc.connect(gain);
-    gain.connect(ctx.destination);
+const gain =
+audio.createGain();
 
-    osc.frequency.value=880;
-    gain.gain.value=.25;
+oscillator.connect(gain);
 
-    osc.start();
+gain.connect(audio.destination);
 
-    setTimeout(()=>{
-      osc.stop();
-      ctx.close();
-    },500);
+oscillator.frequency.value = 900;
 
-  }catch(e){}
+gain.gain.value = 0.3;
+
+oscillator.start();
+
+setTimeout(()=>{
+
+oscillator.stop();
+
+audio.close();
+
+},500);
+
+}catch(error){
+
+console.log(error);
 
 }
+
+}
+
 
 function showToast(text){
 
-  const el=document.getElementById("toast");
+const toast =
+document.getElementById("toast");
 
-  el.textContent=text;
-  el.style.display="block";
+toast.textContent = text;
 
-  setTimeout(()=>{
-    el.style.display="none";
-  },3000);
+toast.style.display = "block";
+
+setTimeout(()=>{
+
+toast.style.display = "none";
+
+},3000);
 
 }
+
 
 async function loadOrders(){
 
-  try{
+try{
 
-    const response=await fetch(
-      SUPABASE_URL+
-      "/rest/v1/orders?select=*&order=created_at.desc",
-      {
-        headers:{
-          apikey:SUPABASE_KEY,
-          Authorization:"Bearer "+SUPABASE_KEY
-        }
-      }
-    );
+const response =
+await fetch(
+SUPABASE_URL+
+"/rest/v1/orders?select=*&order=created_at.desc",
+{
+headers:{
+apikey:SUPABASE_KEY,
+Authorization:"Bearer "+SUPABASE_KEY
+}
+}
+);
 
-    if(!response.ok){
 
-      const error=await response.text();
+if(!response.ok){
 
-      document.getElementById("orders").innerHTML=
-        `<div class="empty">Xatolik: ${error}</div>`;
+const error =
+await response.text();
 
-      return;
+document.getElementById("orders").innerHTML =
+`<div class="empty">
+Xatolik: ${error}
+</div>`;
 
-    }
-
-    const data=await response.json();
-
-    const currentIds=new Set(
-      data.map(x=>String(x.id))
-    );
-
-    let newOrders=[];
-
-    if(!firstLoad){
-
-      newOrders=data.filter(order=>
-        !knownIds.has(String(order.id))
-      );
-
-    }
-
-    orders=data;
-
-    knownIds=currentIds;
-
-    updateStats();
-
-    renderOrders();
-
-    if(newOrders.length){
-
-      document.getElementById("newAlert")
-        .style.display="block";
-
-      playSound();
-
-      showToast(
-        "🔔 Yangi buyurtma: "+
-        (newOrders[0].order_number||"ORD")
-      );
-
-      setTimeout(()=>{
-        document.getElementById("newAlert")
-          .style.display="none";
-      },10000);
-
-    }
-
-    firstLoad=false;
-
-  }catch(error){
-
-    console.error(error);
-
-    document.getElementById("orders").innerHTML=
-      `<div class="empty">
-        Server bilan bog‘lanishda xatolik.
-      </div>`;
-
-  }
+return;
 
 }
+
+
+const data =
+await response.json();
+
+
+let newOrders = [];
+
+
+if(!firstLoad){
+
+newOrders =
+data.filter(order =>
+!knownIds.has(String(order.id))
+);
+
+}
+
+
+orders = data;
+
+
+knownIds =
+new Set(
+data.map(order =>
+String(order.id)
+)
+);
+
+
+updateStats();
+
+renderOrders();
+
+
+if(newOrders.length){
+
+document.getElementById("alert")
+.style.display = "block";
+
+playSound();
+
+showToast(
+"🔔 Yangi buyurtma: "+
+(newOrders[0].order_number || "ORD")
+);
+
+
+setTimeout(()=>{
+
+document.getElementById("alert")
+.style.display = "none";
+
+},10000);
+
+}
+
+
+firstLoad = false;
+
+
+}catch(error){
+
+console.log(error);
+
+document.getElementById("orders").innerHTML =
+`<div class="empty">
+Server bilan bog‘lanishda xatolik.
+</div>`;
+
+}
+
+}
+
 
 function updateStats(){
 
-  const today=new Date()
-    .toISOString()
-    .slice(0,10);
+const today =
+new Date()
+.toISOString()
+.slice(0,10);
 
-  const todayOrders=orders.filter(x=>
-    String(x.created_at||"").startsWith(today)
-  );
 
-  const newOrders=orders.filter(x=>
-    x.status==="new"
-  );
+const todayOrders =
+orders.filter(order =>
+String(order.created_at || "")
+.startsWith(today)
+);
 
-  const cooking=orders.filter(x=>
-    x.status==="preparing"
-  );
 
-  const revenue=todayOrders
-    .filter(x=>x.status!=="cancelled")
-    .reduce(
-      (sum,x)=>sum+Number(x.total||0),
-      0
-    );
+const newOrders =
+orders.filter(order =>
+order.status === "new"
+);
 
-  document.getElementById("todayCount")
-    .textContent=todayOrders.length;
 
-  document.getElementById("newCount")
-    .textContent=newOrders.length;
+const preparing =
+orders.filter(order =>
+order.status === "preparing"
+);
 
-  document.getElementById("cookingCount")
-    .textContent=cooking.length;
 
-  document.getElementById("revenue")
-    .textContent=money(revenue);
+const revenue =
+todayOrders
+.filter(order =>
+order.status !== "cancelled"
+)
+.reduce(
+(sum,order)=>
+sum + Number(order.total || 0),
+0
+);
+
+
+document.getElementById("todayCount")
+.textContent =
+todayOrders.length;
+
+
+document.getElementById("newCount")
+.textContent =
+newOrders.length;
+
+
+document.getElementById("preparingCount")
+.textContent =
+preparing.length;
+
+
+document.getElementById("revenue")
+.textContent =
+money(revenue);
 
 }
+
 
 function setFilter(value,button){
 
-  filter=value;
+filter = value;
 
-  document.querySelectorAll(".filter")
-    .forEach(x=>x.classList.remove("active"));
 
-  button.classList.add("active");
+document.querySelectorAll(".filter")
+.forEach(item =>
+item.classList.remove("active")
+);
 
-  renderOrders();
+
+button.classList.add("active");
+
+
+renderOrders();
 
 }
+
 
 function renderOrders(){
 
-  const box=document.getElementById("orders");
+const box =
+document.getElementById("orders");
 
-  let list=orders;
 
-  if(filter!=="all"){
+let list = orders;
 
-    list=orders.filter(x=>
-      x.status===filter
-    );
 
-  }
+if(filter !== "all"){
 
-  if(!list.length){
-
-    box.innerHTML=
-      `<div class="empty">
-        Hozircha buyurtmalar yo‘q.
-      </div>`;
-
-    return;
-
-  }
-
-  box.innerHTML=list.map(order=>{
-
-    const items=
-      Array.isArray(order.items)
-      ?order.items
-      :[];
-
-    const itemsHtml=items.map(item=>{
-
-      const qty=
-        Number(item.quantity||item.qty||0);
-
-      const price=
-        Number(item.price||0);
-
-      return `
-        <div class="item">
-          <span>
-            ${item.name||"Mahsulot"} × ${qty}
-          </span>
-
-          <span>
-            ${money(price*qty)}
-          </span>
-        </div>
-      `;
-
-    }).join("");
-
-    const status=
-      order.status||"new";
-
-    return `
-
-      <div class="order ${status==="new"?"new":""}">
-
-        <div class="top">
-
-          <div>
-
-            <div class="number">
-              ${order.order_number||"ORD"}
-            </div>
-
-            <div class="time">
-              🕐 ${dateText(order.created_at)}
-            </div>
-
-          </div>
-
-          <div class="badge">
-            ${statusNames[status]||status}
-          </div>
-
-        </div>
-
-        <div class="customer">
-
-          🏪 <b>Do‘kon:</b>
-          ${order.shop_code||"-"}
-
-          <br>
-
-          👤 <b>Mijoz:</b>
-          ${order.customer_name||"-"}
-
-          <br>
-
-          📞 <b>Telefon:</b>
-          ${order.phone||"-"}
-
-        </div>
-
-        <div class="items">
-
-          ${itemsHtml||"Mahsulot yo‘q"}
-
-        </div>
-
-        ${
-          order.note
-          ?`
-            <div class="note">
-              📝 <b>Izoh:</b><br>
-              ${order.note}
-            </div>
-          `
-          :""
-        }
-
-        <div class="total">
-
-          <span>Jami</span>
-
-          <span>
-            ${money(order.total)}
-          </span>
-
-        </div>
-
-        <div class="actions">
-
-          ${
-            status==="new"
-            ?`
-              <button class="action"
-                onclick="changeStatus(${order.id},'preparing')">
-                👨‍🍳 Tayyorlashni boshlash
-              </button>
-            `
-            :""
-          }
-
-          ${
-            status==="preparing"
-            ?`
-              <button class="action"
-                onclick="changeStatus(${order.id},'ready')">
-                ✅ Tayyor
-              </button>
-            `
-            :""
-          }
-
-          ${
-            status==="ready"
-            ?`
-              <button class="action"
-                onclick="changeStatus(${order.id},'courier')">
-                🛵 Kuryerga berish
-              </button>
-            `
-            :""
-          }
-
-          ${
-            status==="courier"
-            ?`
-              <button class="action"
-                onclick="changeStatus(${order.id},'delivered')">
-                📦 Yetkazildi
-              </button>
-            `
-            :""
-          }
-
-          ${
-            status!=="delivered" &&
-            status!=="cancelled"
-            ?`
-              <button class="action"
-                onclick="changeStatus(${order.id},'cancelled')">
-                ❌ Bekor qilish
-              </button>
-            `
-            :""
-          }
-
-        </div>
-
-      </div>
-
-    `;
-
-  }).join("");
+list =
+orders.filter(order =>
+order.status === filter
+);
 
 }
+
+
+if(!list.length){
+
+box.innerHTML =
+`<div class="empty">
+Hozircha buyurtmalar yo‘q.
+</div>`;
+
+return;
+
+}
+
+
+box.innerHTML =
+list.map(order=>{
+
+const items =
+Array.isArray(order.items)
+? order.items
+: [];
+
+
+const itemsHtml =
+items.map(item=>{
+
+const quantity =
+Number(
+item.quantity ||
+item.qty ||
+0
+);
+
+
+const price =
+Number(item.price || 0);
+
+
+return `
+
+<div class="item">
+
+<span>
+${item.name || "Mahsulot"} × ${quantity}
+</span>
+
+<span>
+${money(price * quantity)}
+</span>
+
+</div>
+
+`;
+
+}).join("");
+
+
+const status =
+order.status || "new";
+
+
+return `
+
+<div class="order ${status === "new" ? "new" : ""}">
+
+<div class="order-top">
+
+<div>
+
+<div class="order-number">
+${order.order_number || "ORD"}
+</div>
+
+<div class="time">
+🕐 ${dateText(order.created_at)}
+</div>
+
+</div>
+
+<div class="badge">
+${statusNames[status] || status}
+</div>
+
+</div>
+
+
+<div class="customer">
+
+🏪 <b>Do‘kon:</b>
+${order.shop_code || "-"}
+
+<br>
+
+👤 <b>Mijoz:</b>
+${order.customer_name || "-"}
+
+<br>
+
+📞 <b>Telefon:</b>
+${order.phone || "-"}
+
+</div>
+
+
+<div class="items">
+
+${itemsHtml || "Mahsulot yo‘q"}
+
+</div>
+
+
+${
+order.note
+?
+`
+<div class="note">
+
+📝 <b>Izoh:</b><br>
+
+${order.note}
+
+</div>
+`
+:""
+}
+
+
+<div class="total">
+
+<span>Jami</span>
+
+<span>
+${money(order.total)}
+</span>
+
+</div>
+
+
+<div class="actions">
+
+
+${
+status === "new"
+?
+`
+<button
+class="action"
+onclick="changeStatus(${order.id},'preparing')">
+
+👨‍🍳 Tayyorlashni boshlash
+
+</button>
+`
+:""
+}
+
+
+${
+status === "preparing"
+?
+`
+<button
+class="action"
+onclick="changeStatus(${order.id},'ready')">
+
+✅ Tayyor
+
+</button>
+`
+:""
+}
+
+
+${
+status === "ready"
+?
+`
+<button
+class="action"
+onclick="changeStatus(${order.id},'courier')">
+
+🛵 Kuryerga berish
+
+</button>
+`
+:""
+}
+
+
+${
+status === "courier"
+?
+`
+<button
+class="action"
+onclick="changeStatus(${order.id},'delivered')">
+
+📦 Yetkazildi
+
+</button>
+`
+:""
+}
+
+
+${
+status !== "delivered" &&
+status !== "cancelled"
+?
+`
+<button
+class="action"
+onclick="changeStatus(${order.id},'cancelled')">
+
+❌ Bekor qilish
+
+</button>
+`
+:""
+}
+
+
+</div>
+
+</div>
+
+`;
+
+}).join("");
+
+}
+
 
 async function changeStatus(id,newStatus){
 
-  const order=orders.find(x=>x.id===id);
+const order =
+orders.find(item =>
+item.id === id
+);
 
-  if(!order)return;
 
-  const text=
-    newStatus==="cancelled"
-    ?"Buyurtmani bekor qilasizmi?"
-    :"Statusni "+statusNames[newStatus]+" ga o‘zgartirasizmi?";
+if(!order) return;
 
-  if(!confirm(text))return;
 
-  try{
+const question =
+newStatus === "cancelled"
+?
+"Buyurtmani bekor qilasizmi?"
+:
+"Statusni "+
+statusNames[newStatus]+
+" ga o‘zgartirasizmi?";
 
-    const response=await fetch(
-      SUPABASE_URL+
-      "/rest/v1/orders?id=eq."+id,
-      {
-        method:"PATCH",
 
-        headers:{
-          apikey:SUPABASE_KEY,
-          Authorization:"Bearer "+SUPABASE_KEY,
-          "Content-Type":"application/json",
-          Prefer:"return=minimal"
-        },
+if(!confirm(question))
+return;
 
-        body:JSON.stringify({
-          status:newStatus
-        })
-      }
-    );
 
-    if(!response.ok){
+try{
 
-      const error=await response.text();
+const response =
+await fetch(
+SUPABASE_URL+
+"/rest/v1/orders?id=eq."+id,
+{
+method:"PATCH",
 
-      alert(
-        "Statusni o‘zgartirishda xatolik:\n\n"+
-        error
-      );
+headers:{
+apikey:SUPABASE_KEY,
+Authorization:"Bearer "+SUPABASE_KEY,
+"Content-Type":"application/json",
+Prefer:"return=minimal"
+},
 
-      return;
-
-    }
-
-    order.status=newStatus;
-
-    updateStats();
-    renderOrders();
-
-    showToast(
-      "✅ "+(order.order_number||"Buyurtma")+
-      " yangilandi"
-    );
-
-  }catch(error){
-
-    alert(
-      "Server bilan bog‘lanishda xatolik."
-    );
-
-  }
+body:JSON.stringify({
+status:newStatus
+})
 
 }
+);
+
+
+if(!response.ok){
+
+const error =
+await response.text();
+
+alert(
+"Xatolik:\n\n"+
+error
+);
+
+return;
+
+}
+
+
+order.status =
+newStatus;
+
+
+updateStats();
+
+renderOrders();
+
+
+showToast(
+"✅ "+
+(order.order_number || "Buyurtma")+
+" yangilandi"
+);
+
+
+}catch(error){
+
+alert(
+"Server bilan bog‘lanishda xatolik."
+);
+
+}
+
+}
+
 
 async function manualRefresh(){
 
-  await loadOrders();
+await loadOrders();
 
-  showToast("🔄 Yangilandi");
+showToast("🔄 Yangilandi");
 
 }
 
+
 loadOrders();
 
-setInterval(()=>{
 
-  loadOrders();
-
-},15000);
+setInterval(
+loadOrders,
+15000
+);
 
 </script>
 
