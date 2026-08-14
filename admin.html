@@ -6,7 +6,10 @@
 
 <title>RastaGo Admin</title>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <style>
+
 *{
   box-sizing:border-box;
 }
@@ -44,6 +47,7 @@ header{
 .header-buttons{
   display:flex;
   gap:8px;
+  flex-wrap:wrap;
 }
 
 .header-buttons button{
@@ -57,6 +61,11 @@ header{
 .sound{
   background:white;
   color:#111827;
+}
+
+.shops{
+  background:#16a34a;
+  color:white;
 }
 
 .refresh{
@@ -244,7 +253,234 @@ header{
   padding:13px 18px;
   border-radius:12px;
   display:none;
-  z-index:999;
+  z-index:9999;
+}
+
+/* DO‘KONLAR */
+
+.shops-page{
+  display:none;
+}
+
+.page-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.page-title h2{
+  margin:0;
+}
+
+.add-shop-btn{
+  border:0;
+  background:#16a34a;
+  color:white;
+  padding:12px 15px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.shop-card{
+  background:white;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:12px;
+  box-shadow:0 3px 12px rgba(0,0,0,.07);
+}
+
+.shop-card-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.shop-code{
+  font-size:22px;
+  font-weight:bold;
+}
+
+.shop-name{
+  font-size:18px;
+  font-weight:bold;
+  margin-top:4px;
+}
+
+.shop-address{
+  color:#6b7280;
+  margin-top:8px;
+  line-height:1.5;
+}
+
+.shop-buttons{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:14px;
+}
+
+.shop-btn{
+  border:0;
+  padding:11px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+  background:#eef2f7;
+}
+
+.shop-btn.qr{
+  background:#111827;
+  color:white;
+}
+
+.shop-btn.print{
+  background:#2563eb;
+  color:white;
+}
+
+.shop-btn.link{
+  background:#16a34a;
+  color:white;
+}
+
+/* MODAL */
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:5000;
+  padding:20px;
+  overflow:auto;
+}
+
+.modal-box{
+  max-width:500px;
+  margin:30px auto;
+  background:white;
+  border-radius:18px;
+  padding:20px;
+}
+
+.modal-title{
+  font-size:21px;
+  font-weight:bold;
+  margin-bottom:18px;
+}
+
+.field{
+  margin-bottom:13px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:6px;
+}
+
+.field input{
+  width:100%;
+  padding:13px;
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  font-size:15px;
+  outline:none;
+}
+
+.field input:focus{
+  border-color:#2563eb;
+}
+
+.modal-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:15px;
+}
+
+.modal-buttons button{
+  border:0;
+  padding:13px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.cancel-btn{
+  background:#eef2f7;
+}
+
+.save-btn{
+  background:#16a34a;
+  color:white;
+}
+
+/* QR */
+
+.qr-box{
+  text-align:center;
+}
+
+.qr-shop-name{
+  font-size:23px;
+  font-weight:bold;
+  margin-bottom:5px;
+}
+
+.qr-code-text{
+  color:#6b7280;
+  font-weight:bold;
+}
+
+#qrcode{
+  display:flex;
+  justify-content:center;
+  margin:20px 0;
+}
+
+.qr-address{
+  color:#374151;
+  line-height:1.5;
+  margin-bottom:15px;
+}
+
+.qr-url{
+  font-size:11px;
+  color:#6b7280;
+  word-break:break-all;
+  background:#f3f4f6;
+  padding:10px;
+  border-radius:8px;
+}
+
+.qr-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:15px;
+}
+
+.qr-actions button{
+  border:0;
+  padding:13px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.print-qr{
+  background:#2563eb;
+  color:white;
+}
+
+.close-qr{
+  background:#eef2f7;
 }
 
 @media(max-width:650px){
@@ -261,6 +497,10 @@ header{
     grid-template-columns:1fr;
   }
 
+  .shop-buttons{
+    grid-template-columns:1fr;
+  }
+
   .logo{
     font-size:17px;
   }
@@ -268,7 +508,14 @@ header{
   .header-buttons button{
     padding:9px 10px;
   }
+
+  .page-title{
+    align-items:stretch;
+    flex-direction:column;
+  }
+
 }
+
 </style>
 
 </head>
@@ -289,6 +536,10 @@ header{
 🔔 Ovoz
 </button>
 
+<button class="shops" onclick="openShops()">
+🏪 Do‘konlar
+</button>
+
 <button class="refresh" onclick="manualRefresh()">
 🔄
 </button>
@@ -301,6 +552,10 @@ header{
 
 
 <div class="container">
+
+<!-- BUYURTMALAR -->
+
+<div id="ordersPage">
 
 <div id="alert" class="alert">
 🔔 YANGI BUYURTMA KELDI!
@@ -366,9 +621,174 @@ Barchasi
 
 
 <div id="orders">
+
 <div class="empty">
 Buyurtmalar yuklanmoqda...
 </div>
+
+</div>
+
+</div>
+
+
+<!-- DO‘KONLAR -->
+
+<div id="shopsPage" class="shops-page">
+
+<div class="page-title">
+
+<h2>🏪 Do‘konlar</h2>
+
+<button class="add-shop-btn" onclick="openAddShop()">
+➕ Yangi do‘kon
+</button>
+
+</div>
+
+<div id="shopsList">
+
+<div class="empty">
+Do‘konlar yuklanmoqda...
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- YANGI DO‘KON MODALI -->
+
+<div id="shopModal" class="modal">
+
+<div class="modal-box">
+
+<div class="modal-title">
+➕ Yangi do‘kon
+</div>
+
+<div class="field">
+
+<label>Do‘kon nomi</label>
+
+<input
+id="shopDisplayName"
+type="text"
+placeholder="Masalan: Ali oshxonasi"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>Bozor nomi</label>
+
+<input
+id="marketName"
+type="text"
+placeholder="Masalan: Test bozori"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>Qator</label>
+
+<input
+id="rowName"
+type="text"
+placeholder="Masalan: 3-qator"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>Do‘kon raqami</label>
+
+<input
+id="shopNumber"
+type="text"
+placeholder="Masalan: 47"
+>
+
+</div>
+
+
+<div class="modal-buttons">
+
+<button
+class="cancel-btn"
+onclick="closeAddShop()">
+
+Bekor qilish
+
+</button>
+
+<button
+class="save-btn"
+onclick="saveShop()">
+
+💾 Saqlash
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- QR MODAL -->
+
+<div id="qrModal" class="modal">
+
+<div class="modal-box">
+
+<div class="qr-box">
+
+<div id="qrShopName" class="qr-shop-name">
+</div>
+
+<div id="qrShopCode" class="qr-code-text">
+</div>
+
+<div id="qrcode"></div>
+
+<div id="qrAddress" class="qr-address">
+</div>
+
+<div id="qrUrl" class="qr-url">
+</div>
+
+<div class="qr-actions">
+
+<button
+class="print-qr"
+onclick="printQR()">
+
+🖨️ Chop etish
+
+</button>
+
+<button
+class="close-qr"
+onclick="closeQR()">
+
+Yopish
+
+</button>
+
+</div>
+
+</div>
+
 </div>
 
 </div>
@@ -387,10 +807,18 @@ const SUPABASE_KEY =
 
 
 let orders = [];
+
+let shops = [];
+
 let filter = "all";
+
 let firstLoad = true;
+
 let knownIds = new Set();
+
 let soundEnabled = false;
+
+let currentQRShop = null;
 
 
 const statusNames = {
@@ -535,6 +963,11 @@ toast.style.display = "none";
 },3000);
 
 }
+
+
+/* =========================
+   BUYURTMALAR
+========================= */
 
 
 async function loadOrders(){
@@ -1063,6 +1496,778 @@ alert(
 }
 
 
+/* =========================
+   DO‘KONLAR
+========================= */
+
+
+function openShops(){
+
+document.getElementById("ordersPage")
+.style.display = "none";
+
+document.getElementById("shopsPage")
+.style.display = "block";
+
+loadShops();
+
+}
+
+
+function openOrders(){
+
+document.getElementById("shopsPage")
+.style.display = "none";
+
+document.getElementById("ordersPage")
+.style.display = "block";
+
+loadOrders();
+
+}
+
+
+async function loadShops(){
+
+const box =
+document.getElementById("shopsList");
+
+box.innerHTML =
+`<div class="empty">
+Do‘konlar yuklanmoqda...
+</div>`;
+
+
+try{
+
+const response =
+await fetch(
+SUPABASE_URL+
+"/rest/v1/shops?select=*&order=shop_code.asc",
+{
+headers:{
+apikey:SUPABASE_KEY,
+Authorization:"Bearer "+SUPABASE_KEY
+}
+}
+);
+
+
+if(!response.ok){
+
+const error =
+await response.text();
+
+box.innerHTML =
+`<div class="empty">
+Xatolik: ${error}
+</div>`;
+
+return;
+
+}
+
+
+shops =
+await response.json();
+
+
+renderShops();
+
+
+}catch(error){
+
+console.log(error);
+
+box.innerHTML =
+`<div class="empty">
+Server bilan bog‘lanishda xatolik.
+</div>`;
+
+}
+
+}
+
+
+function renderShops(){
+
+const box =
+document.getElementById("shopsList");
+
+
+if(!shops.length){
+
+box.innerHTML =
+`<div class="empty">
+
+Hozircha do‘konlar yo‘q.
+
+<br><br>
+
+Yuqoridagi
+<b>➕ Yangi do‘kon</b>
+tugmasini bosing.
+
+</div>`;
+
+return;
+
+}
+
+
+box.innerHTML =
+shops.map(shop=>{
+
+const address =
+shop.address ||
+[
+shop.market_name,
+shop.row_name,
+shop.shop_number
+?
+"Do‘kon "+shop.shop_number
+:null
+]
+.filter(Boolean)
+.join(", ");
+
+
+return `
+
+<div class="shop-card">
+
+<div class="shop-card-top">
+
+<div>
+
+<div class="shop-code">
+${shop.shop_code || "-"}
+</div>
+
+<div class="shop-name">
+${shop.display_name || "Nomsiz do‘kon"}
+</div>
+
+<div class="shop-address">
+📍 ${address || "Manzil kiritilmagan"}
+</div>
+
+</div>
+
+<div class="badge">
+${shop.is_active === false ? "❌ Faol emas" : "✅ Faol"}
+</div>
+
+</div>
+
+
+<div class="shop-buttons">
+
+<button
+class="shop-btn qr"
+onclick="showQR('${shop.shop_code}')">
+
+📱 QR
+
+</button>
+
+
+<button
+class="shop-btn print"
+onclick="showQR('${shop.shop_code}',true)">
+
+🖨️ Chop etish
+
+</button>
+
+
+<button
+class="shop-btn link"
+onclick="copyShopLink('${shop.shop_code}')">
+
+🔗 Havola
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}).join("");
+
+}
+
+
+/* =========================
+   YANGI DO‘KON
+========================= */
+
+
+function openAddShop(){
+
+document.getElementById("shopModal")
+.style.display = "block";
+
+document.getElementById("shopDisplayName")
+.value = "";
+
+document.getElementById("marketName")
+.value = "";
+
+document.getElementById("rowName")
+.value = "";
+
+document.getElementById("shopNumber")
+.value = "";
+
+}
+
+
+function closeAddShop(){
+
+document.getElementById("shopModal")
+.style.display = "none";
+
+}
+
+
+function generateNextShopCode(){
+
+let maxNumber = 0;
+
+
+shops.forEach(shop=>{
+
+const match =
+String(shop.shop_code || "")
+.match(/^B(\d+)$/);
+
+
+if(match){
+
+maxNumber =
+Math.max(
+maxNumber,
+Number(match[1])
+);
+
+}
+
+});
+
+
+return "B"+
+String(maxNumber + 1)
+.padStart(3,"0");
+
+}
+
+
+async function saveShop(){
+
+const displayName =
+document.getElementById("shopDisplayName")
+.value.trim();
+
+
+const marketName =
+document.getElementById("marketName")
+.value.trim();
+
+
+const rowName =
+document.getElementById("rowName")
+.value.trim();
+
+
+const shopNumber =
+document.getElementById("shopNumber")
+.value.trim();
+
+
+if(!displayName){
+
+alert("Do‘kon nomini kiriting.");
+
+return;
+
+}
+
+
+if(!marketName){
+
+alert("Bozor nomini kiriting.");
+
+return;
+
+}
+
+
+if(!rowName){
+
+alert("Qatorni kiriting.");
+
+return;
+
+}
+
+
+if(!shopNumber){
+
+alert("Do‘kon raqamini kiriting.");
+
+return;
+
+}
+
+
+const shopCode =
+generateNextShopCode();
+
+
+const address =
+[
+marketName,
+rowName,
+"Do‘kon "+shopNumber
+]
+.join(", ");
+
+
+try{
+
+const response =
+await fetch(
+SUPABASE_URL+
+"/rest/v1/shops",
+{
+method:"POST",
+
+headers:{
+apikey:SUPABASE_KEY,
+Authorization:"Bearer "+SUPABASE_KEY,
+"Content-Type":"application/json",
+Prefer:"return=representation"
+},
+
+body:JSON.stringify({
+
+shop_code:shopCode,
+
+market_name:marketName,
+
+row_name:rowName,
+
+shop_number:shopNumber,
+
+display_name:displayName,
+
+address:address,
+
+is_active:true
+
+})
+
+}
+);
+
+
+if(!response.ok){
+
+const error =
+await response.text();
+
+alert(
+"Do‘konni saqlashda xatolik:\n\n"+
+error
+);
+
+return;
+
+}
+
+
+closeAddShop();
+
+showToast(
+"✅ "+
+shopCode+
+" do‘kon qo‘shildi"
+);
+
+
+await loadShops();
+
+
+}catch(error){
+
+console.log(error);
+
+alert(
+"Server bilan bog‘lanishda xatolik."
+);
+
+}
+
+}
+
+
+/* =========================
+   QR
+========================= */
+
+
+function getShopLink(shopCode){
+
+return (
+"https://azimabrorov011-jpg.github.io/bozorfood-miniapp/?shop="+
+encodeURIComponent(shopCode)
+);
+
+}
+
+
+function showQR(shopCode,autoPrint=false){
+
+const shop =
+shops.find(item =>
+item.shop_code === shopCode
+);
+
+
+if(!shop){
+
+alert("Do‘kon topilmadi.");
+
+return;
+
+}
+
+
+currentQRShop = shop;
+
+
+const address =
+shop.address ||
+[
+shop.market_name,
+shop.row_name,
+shop.shop_number
+?
+"Do‘kon "+shop.shop_number
+:null
+]
+.filter(Boolean)
+.join(", ");
+
+
+document.getElementById("qrShopName")
+.textContent =
+shop.display_name || "RastaGo";
+
+
+document.getElementById("qrShopCode")
+.textContent =
+shop.shop_code;
+
+
+document.getElementById("qrAddress")
+.textContent =
+"📍 "+address;
+
+
+const link =
+getShopLink(shop.shop_code);
+
+
+document.getElementById("qrUrl")
+.textContent =
+link;
+
+
+const qr =
+document.getElementById("qrcode");
+
+
+qr.innerHTML = "";
+
+
+new QRCode(qr,{
+
+text:link,
+
+width:220,
+
+height:220,
+
+correctLevel:QRCode.CorrectLevel.H
+
+});
+
+
+document.getElementById("qrModal")
+.style.display = "block";
+
+
+if(autoPrint){
+
+setTimeout(()=>{
+
+printQR();
+
+},700);
+
+}
+
+}
+
+
+function closeQR(){
+
+document.getElementById("qrModal")
+.style.display = "none";
+
+currentQRShop = null;
+
+}
+
+
+async function copyShopLink(shopCode){
+
+const link =
+getShopLink(shopCode);
+
+
+try{
+
+await navigator.clipboard.writeText(link);
+
+showToast("🔗 QR havolasi nusxalandi");
+
+}catch(error){
+
+prompt(
+"QR havolasi:",
+link
+);
+
+}
+
+}
+
+
+function printQR(){
+
+if(!currentQRShop){
+
+return;
+
+}
+
+
+const shop =
+currentQRShop;
+
+
+const address =
+shop.address ||
+[
+shop.market_name,
+shop.row_name,
+shop.shop_number
+?
+"Do‘kon "+shop.shop_number
+:null
+]
+.filter(Boolean)
+.join(", ");
+
+
+const link =
+getShopLink(shop.shop_code);
+
+
+const qrImage =
+document.querySelector("#qrcode img");
+
+
+if(!qrImage){
+
+alert("QR hali tayyor emas.");
+
+return;
+
+}
+
+
+const printWindow =
+window.open(
+"",
+"_blank",
+"width=600,height=800"
+);
+
+
+if(!printWindow){
+
+alert(
+"Chop etish oynasi bloklangan. Brauzerda popupga ruxsat bering."
+);
+
+return;
+
+}
+
+
+printWindow.document.write(`
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>
+${shop.shop_code} QR
+</title>
+
+<style>
+
+body{
+
+font-family:Arial,sans-serif;
+
+text-align:center;
+
+padding:40px;
+
+}
+
+h1{
+
+font-size:28px;
+
+margin-bottom:8px;
+
+}
+
+.code{
+
+font-size:20px;
+
+font-weight:bold;
+
+color:#555;
+
+}
+
+.address{
+
+font-size:18px;
+
+margin:20px auto;
+
+max-width:450px;
+
+line-height:1.5;
+
+}
+
+img{
+
+width:300px;
+
+height:300px;
+
+margin:20px;
+
+}
+
+.text{
+
+font-size:20px;
+
+font-weight:bold;
+
+margin-top:15px;
+
+}
+
+.small{
+
+font-size:12px;
+
+color:#777;
+
+margin-top:20px;
+
+word-break:break-all;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>
+🍽 RastaGo
+</h1>
+
+<h2>
+${shop.display_name || ""}
+</h2>
+
+<div class="code">
+${shop.shop_code}
+</div>
+
+<img
+src="${qrImage.src}"
+>
+
+<div class="address">
+📍 ${address}
+</div>
+
+<div class="text">
+📱 QR kodni skaner qiling va ovqat buyurtma qiling
+</div>
+
+<div class="small">
+${link}
+</div>
+
+<script>
+
+window.onload=function(){
+
+window.print();
+
+};
+
+</script>
+
+</body>
+
+</html>
+
+`);
+
+
+printWindow.document.close();
+
+}
+
+
+/* =========================
+   REFRESH
+========================= */
+
+
 async function manualRefresh(){
 
 await loadOrders();
@@ -1070,6 +2275,11 @@ await loadOrders();
 showToast("🔄 Yangilandi");
 
 }
+
+
+/* =========================
+   START
+========================= */
 
 
 loadOrders();
