@@ -790,12 +790,13 @@ async function changeStatus(orderId, newStatus) {
 
 loadOrders();
 
+setInterval(async () => {
+  const scrollPosition = window.scrollY;
 
-setInterval(() => {
+  await loadOrders();
 
-  loadOrders();
-
-}, 15000);
+  window.scrollTo(0, scrollPosition);
+}, 30000);
 
 </script>
 
