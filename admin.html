@@ -1,1 +1,163 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>RastaGo Admin</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    .order {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .order-number {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: #eee;
+    }
+
+    .items {
+      margin-top: 10px;
+    }
+
+    .total {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .empty {
+      text-align: center;
+      color: #777;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>📋 RastaGo Admin</h1>
+
+  <div id="orders">
+    Yuklanmoqda...
+  </div>
+
+  <script>
+
+    const SUPABASE_URL =
+      "https://uqgckzrmibdgxkxdfzav.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_KBodwmECQvN46zDKjOwfhg_fet6nBiy";
+
+    async function loadOrders() {
+
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/orders?select=*&order=created_at.desc`,
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.text();
+
+        document.getElementById("orders").innerHTML =
+          `<div class="empty">Xatolik: ${error}</div>`;
+
+        return;
+      }
+
+      const orders = await response.json();
+
+      const container =
+        document.getElementById("orders");
+
+      if (!orders.length) {
+        container.innerHTML =
+          `<div class="empty">Hozircha buyurtmalar yo‘q.</div>`;
+
+        return;
+      }
+
+      container.innerHTML = orders.map(order => {
+
+        const items = Array.isArray(order.items)
+          ? order.items
+          : [];
+
+        const itemsHtml = items.map(item => `
+          <div>
+            ${item.name} × ${item.quantity}
+          </div>
+        `).join("");
+
+        return `
+          <div class="order">
+
+            <div class="order-number">
+              ${order.order_number || "ORD"}
+            </div>
+
+            <div>
+              🏪 ${order.shop_code || "-"}
+            </div>
+
+            <div>
+              👤 ${order.customer_name || "-"}
+            </div>
+
+            <div>
+              📞 ${order.phone || "-"}
+            </div>
+
+            <div class="items">
+              ${itemsHtml}
+            </div>
+
+            <div class="total">
+              💰 ${Number(order.total || 0).toLocaleString("uz-UZ")} so'm
+            </div>
+
+            <div class="status">
+              Status: ${order.status || "-"}
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
+    }
+
+    loadOrders();
+
+  </script>
+
+</body>
+</html>
