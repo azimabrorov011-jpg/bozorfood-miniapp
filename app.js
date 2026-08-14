@@ -1,4 +1,4 @@
-alert("YANGI APP.JS ISHLAYAPTI");
+
 const tg = window.Telegram?.WebApp;
 
 if (tg) {
