@@ -1,2294 +1,1428 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>RastaGo Admin</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-<style>
-
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f3f4f6;
-  color:#111827;
-}
-
-header{
-  background:#111827;
-  color:white;
-  padding:15px;
-  position:sticky;
-  top:0;
-  z-index:100;
-}
-
-.header{
-  max-width:1100px;
-  margin:auto;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-}
-
-.logo{
-  font-size:21px;
-  font-weight:bold;
-}
-
-.header-buttons{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.header-buttons button{
-  border:0;
-  padding:10px 13px;
-  border-radius:9px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.sound{
-  background:white;
-  color:#111827;
-}
-
-.shops{
-  background:#16a34a;
-  color:white;
-}
-
-.refresh{
-  background:#2563eb;
-  color:white;
-}
-
-.container{
-  max-width:1100px;
-  margin:auto;
-  padding:15px;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  margin-bottom:15px;
-}
-
-.stat{
-  background:white;
-  border-radius:14px;
-  padding:15px;
-  box-shadow:0 2px 8px rgba(0,0,0,.06);
-}
-
-.stat-title{
-  color:#6b7280;
-  font-size:13px;
-}
-
-.stat-value{
-  font-size:24px;
-  font-weight:bold;
-  margin-top:5px;
-}
-
-.filters{
-  display:flex;
-  gap:8px;
-  overflow-x:auto;
-  margin-bottom:15px;
-  padding-bottom:5px;
-}
-
-.filter{
-  white-space:nowrap;
-  border:0;
-  background:white;
-  padding:10px 13px;
-  border-radius:9px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.filter.active{
-  background:#111827;
-  color:white;
-}
-
-.alert{
-  display:none;
-  background:#dc2626;
-  color:white;
-  padding:13px;
-  border-radius:12px;
-  text-align:center;
-  font-weight:bold;
-  margin-bottom:15px;
-  animation:pulse 1s infinite;
-}
-
-@keyframes pulse{
-  50%{
-    opacity:.55;
-  }
-}
-
-.order{
-  background:white;
-  border-radius:16px;
-  padding:16px;
-  margin-bottom:13px;
-  box-shadow:0 3px 12px rgba(0,0,0,.07);
-}
-
-.order.new{
-  border:2px solid #dc2626;
-}
-
-.order-top{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.order-number{
-  font-size:21px;
-  font-weight:bold;
-}
-
-.time{
-  color:#6b7280;
-  font-size:12px;
-  margin-top:4px;
-}
-
-.badge{
-  height:max-content;
-  padding:7px 10px;
-  border-radius:9px;
-  background:#eef2f7;
-  font-size:12px;
-  font-weight:bold;
-}
-
-.customer{
-  margin-top:13px;
-  background:#f8fafc;
-  padding:12px;
-  border-radius:11px;
-  line-height:1.8;
-}
-
-.items{
-  margin-top:13px;
-  padding:10px 0;
-  border-top:1px solid #eee;
-  border-bottom:1px solid #eee;
-}
-
-.item{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  padding:6px 0;
-}
-
-.note{
-  margin-top:12px;
-  background:#fff7ed;
-  color:#9a3412;
-  padding:11px;
-  border-radius:10px;
-}
-
-.total{
-  display:flex;
-  justify-content:space-between;
-  margin-top:13px;
-  font-size:18px;
-  font-weight:bold;
-}
-
-.actions{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px;
-  margin-top:14px;
-}
-
-.action{
-  border:0;
-  padding:12px;
-  border-radius:10px;
-  background:#eef2f7;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.empty{
-  text-align:center;
-  padding:45px 15px;
-  color:#6b7280;
-}
-
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:20px;
-  transform:translateX(-50%);
-  background:#111827;
-  color:white;
-  padding:13px 18px;
-  border-radius:12px;
-  display:none;
-  z-index:9999;
-}
-
-/* DO‘KONLAR */
-
-.shops-page{
-  display:none;
-}
-
-.page-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:15px;
-}
-
-.page-title h2{
-  margin:0;
-}
-
-.add-shop-btn{
-  border:0;
-  background:#16a34a;
-  color:white;
-  padding:12px 15px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.shop-card{
-  background:white;
-  border-radius:16px;
-  padding:16px;
-  margin-bottom:12px;
-  box-shadow:0 3px 12px rgba(0,0,0,.07);
-}
-
-.shop-card-top{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  align-items:flex-start;
-}
-
-.shop-code{
-  font-size:22px;
-  font-weight:bold;
-}
-
-.shop-name{
-  font-size:18px;
-  font-weight:bold;
-  margin-top:4px;
-}
-
-.shop-address{
-  color:#6b7280;
-  margin-top:8px;
-  line-height:1.5;
-}
-
-.shop-buttons{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-top:14px;
-}
-
-.shop-btn{
-  border:0;
-  padding:11px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
-  background:#eef2f7;
-}
-
-.shop-btn.qr{
-  background:#111827;
-  color:white;
-}
-
-.shop-btn.print{
-  background:#2563eb;
-  color:white;
-}
-
-.shop-btn.link{
-  background:#16a34a;
-  color:white;
-}
-
-/* MODAL */
-
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  z-index:5000;
-  padding:20px;
-  overflow:auto;
-}
-
-.modal-box{
-  max-width:500px;
-  margin:30px auto;
-  background:white;
-  border-radius:18px;
-  padding:20px;
-}
-
-.modal-title{
-  font-size:21px;
-  font-weight:bold;
-  margin-bottom:18px;
-}
-
-.field{
-  margin-bottom:13px;
-}
-
-.field label{
-  display:block;
-  font-size:13px;
-  font-weight:bold;
-  margin-bottom:6px;
-}
-
-.field input{
-  width:100%;
-  padding:13px;
-  border:1px solid #d1d5db;
-  border-radius:10px;
-  font-size:15px;
-  outline:none;
-}
-
-.field input:focus{
-  border-color:#2563eb;
-}
-
-.modal-buttons{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:15px;
-}
-
-.modal-buttons button{
-  border:0;
-  padding:13px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.cancel-btn{
-  background:#eef2f7;
-}
-
-.save-btn{
-  background:#16a34a;
-  color:white;
-}
-
-/* QR */
-
-.qr-box{
-  text-align:center;
-}
-
-.qr-shop-name{
-  font-size:23px;
-  font-weight:bold;
-  margin-bottom:5px;
-}
-
-.qr-code-text{
-  color:#6b7280;
-  font-weight:bold;
-}
-
-#qrcode{
-  display:flex;
-  justify-content:center;
-  margin:20px 0;
-}
-
-.qr-address{
-  color:#374151;
-  line-height:1.5;
-  margin-bottom:15px;
-}
-
-.qr-url{
-  font-size:11px;
-  color:#6b7280;
-  word-break:break-all;
-  background:#f3f4f6;
-  padding:10px;
-  border-radius:8px;
-}
-
-.qr-actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:15px;
-}
-
-.qr-actions button{
-  border:0;
-  padding:13px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.print-qr{
-  background:#2563eb;
-  color:white;
-}
-
-.close-qr{
-  background:#eef2f7;
-}
-
-@media(max-width:650px){
-
-  .stats{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .order-top{
-    flex-direction:column;
-  }
-
-  .actions{
-    grid-template-columns:1fr;
-  }
-
-  .shop-buttons{
-    grid-template-columns:1fr;
-  }
-
-  .logo{
-    font-size:17px;
-  }
-
-  .header-buttons button{
-    padding:9px 10px;
-  }
-
-  .page-title{
-    align-items:stretch;
-    flex-direction:column;
-  }
-
-}
-
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>RastaGo Admin</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 15px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 21px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 10px 14px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn {
+      background: white;
+      color: #111827;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-green {
+      background: #16a34a;
+      color: white;
+    }
+
+    .btn-red {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-gray {
+      background: #6b7280;
+      color: white;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 15px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .stat {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+
+    .stat-title {
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .stat-value {
+      font-size: 25px;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      margin-bottom: 15px;
+      padding-bottom: 5px;
+    }
+
+    .filter {
+      background: white;
+      white-space: nowrap;
+    }
+
+    .filter.active {
+      background: #2563eb;
+      color: white;
+    }
+
+    .alert {
+      display: none;
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .order-card {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 9px rgba(0,0,0,.07);
+    }
+
+    .order-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .order-number {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .status {
+      padding: 6px 9px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+      background: #e5e7eb;
+    }
+
+    .status-new {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-preparing {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .status-ready {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-courier {
+      background: #ede9fe;
+      color: #6d28d9;
+    }
+
+    .status-delivered {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-cancelled {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .info {
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .items {
+      background: #f9fafb;
+      border-radius: 9px;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+    }
+
+    .total {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .empty {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      color: #6b7280;
+    }
+
+    /* SHOPS */
+
+    #shopsPage {
+      display: none;
+    }
+
+    .shops-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .shop-card {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 9px rgba(0,0,0,.07);
+    }
+
+    .shop-code {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    .shop-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .shop-address {
+      color: #6b7280;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .shop-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    /* MODAL */
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 100;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-box {
+      background: white;
+      max-width: 500px;
+      margin: 30px auto;
+      border-radius: 15px;
+      padding: 20px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 5px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      font-size: 15px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+    }
+
+    #qrBox {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    #qrcode {
+      display: inline-block;
+      padding: 12px;
+      background: white;
+    }
+
+    #qrLink {
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .order-top {
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
+  <div class="header-row">
+    <h1>🍽 RastaGo Admin</h1>
 
-<div class="header">
-
-<div class="logo">
-🍽 RastaGo Admin
-</div>
-
-<div class="header-buttons">
-
-<button class="sound" onclick="enableSound()">
-🔔 Ovoz
-</button>
-
-<button class="shops" onclick="openShops()">
-🏪 Do‘konlar
-</button>
-
-<button class="refresh" onclick="manualRefresh()">
-🔄
-</button>
-
-</div>
-
-</div>
-
+    <div style="display:flex; gap:7px;">
+      <button class="btn" onclick="openOrders()">🧾 Buyurtmalar</button>
+      <button class="btn" onclick="openShops()">🏪 Do‘konlar</button>
+      <button class="btn" onclick="manualRefresh()">🔄</button>
+    </div>
+  </div>
 </header>
-
 
 <div class="container">
 
-<!-- BUYURTMALAR -->
+  <!-- ================= ORDERS ================= -->
 
-<div id="ordersPage">
+  <section id="ordersPage">
 
-<div id="alert" class="alert">
-🔔 YANGI BUYURTMA KELDI!
-</div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-title">Bugungi buyurtmalar</div>
+        <div class="stat-value" id="todayCount">0</div>
+      </div>
 
+      <div class="stat">
+        <div class="stat-title">Yangi</div>
+        <div class="stat-value" id="newCount">0</div>
+      </div>
 
-<div class="stats">
+      <div class="stat">
+        <div class="stat-title">Tayyorlanmoqda</div>
+        <div class="stat-value" id="preparingCount">0</div>
+      </div>
 
-<div class="stat">
-<div class="stat-title">Bugun</div>
-<div id="todayCount" class="stat-value">0</div>
-</div>
+      <div class="stat">
+        <div class="stat-title">Daromad</div>
+        <div class="stat-value" id="revenue">0</div>
+      </div>
+    </div>
 
-<div class="stat">
-<div class="stat-title">Yangi</div>
-<div id="newCount" class="stat-value">0</div>
-</div>
+    <div id="newAlert" class="alert">
+      🔔 Yangi buyurtma bor!
+    </div>
 
-<div class="stat">
-<div class="stat-title">Tayyorlanmoqda</div>
-<div id="preparingCount" class="stat-value">0</div>
-</div>
+    <div class="filters">
+      <button class="filter active" onclick="setFilter('all', this)">Barchasi</button>
+      <button class="filter" onclick="setFilter('new', this)">Yangi</button>
+      <button class="filter" onclick="setFilter('preparing', this)">Tayyorlanmoqda</button>
+      <button class="filter" onclick="setFilter('ready', this)">Tayyor</button>
+      <button class="filter" onclick="setFilter('courier', this)">Kuryerda</button>
+      <button class="filter" onclick="setFilter('delivered', this)">Yetkazildi</button>
+      <button class="filter" onclick="setFilter('cancelled', this)">Bekor</button>
+    </div>
 
-<div class="stat">
-<div class="stat-title">Bugungi savdo</div>
-<div id="revenue" class="stat-value">0</div>
-</div>
+    <div id="orders">
+      Buyurtmalar yuklanmoqda...
+    </div>
 
-</div>
+  </section>
 
+  <!-- ================= SHOPS ================= -->
 
-<div class="filters">
+  <section id="shopsPage">
 
-<button class="filter active" onclick="setFilter('all',this)">
-Barchasi
-</button>
+    <div class="shops-header">
+      <h2>🏪 Do‘konlar</h2>
 
-<button class="filter" onclick="setFilter('new',this)">
-🆕 Yangi
-</button>
+      <button class="btn-primary" onclick="openAddShop()">
+        ➕ Yangi do‘kon
+      </button>
+    </div>
 
-<button class="filter" onclick="setFilter('preparing',this)">
-👨‍🍳 Tayyorlanmoqda
-</button>
+    <div id="shops">
+      Do‘konlar yuklanmoqda...
+    </div>
 
-<button class="filter" onclick="setFilter('ready',this)">
-✅ Tayyor
-</button>
-
-<button class="filter" onclick="setFilter('courier',this)">
-🛵 Kuryerda
-</button>
-
-<button class="filter" onclick="setFilter('delivered',this)">
-📦 Yetkazildi
-</button>
-
-<button class="filter" onclick="setFilter('cancelled',this)">
-❌ Bekor
-</button>
-
-</div>
-
-
-<div id="orders">
-
-<div class="empty">
-Buyurtmalar yuklanmoqda...
-</div>
+  </section>
 
 </div>
 
-</div>
-
-
-<!-- DO‘KONLAR -->
-
-<div id="shopsPage" class="shops-page">
-
-<div class="page-title">
-
-<h2>🏪 Do‘konlar</h2>
-
-<button class="add-shop-btn" onclick="openAddShop()">
-➕ Yangi do‘kon
-</button>
-
-</div>
-
-<div id="shopsList">
-
-<div class="empty">
-Do‘konlar yuklanmoqda...
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- YANGI DO‘KON MODALI -->
+<!-- ================= ADD SHOP MODAL ================= -->
 
 <div id="shopModal" class="modal">
 
-<div class="modal-box">
+  <div class="modal-box">
 
-<div class="modal-title">
-➕ Yangi do‘kon
-</div>
+    <div class="modal-title">
+      ➕ Yangi do‘kon
+    </div>
 
-<div class="field">
+    <label>Do‘kon kodi</label>
+    <input id="shopCode" readonly>
 
-<label>Do‘kon nomi</label>
+    <label>Do‘kon nomi</label>
+    <input id="shopDisplayName" placeholder="Masalan: Ali oshxonasi">
 
-<input
-id="shopDisplayName"
-type="text"
-placeholder="Masalan: Ali oshxonasi"
->
+    <label>Bozor nomi</label>
+    <input id="shopMarketName" placeholder="Masalan: Chilonzor bozori">
 
-</div>
+    <label>Qator</label>
+    <input id="shopRowName" placeholder="Masalan: 3-qator">
 
+    <label>Do‘kon raqami</label>
+    <input id="shopNumber" placeholder="Masalan: 47">
 
-<div class="field">
+    <div class="modal-actions">
+      <button class="btn-gray" onclick="closeShopModal()">
+        Bekor qilish
+      </button>
 
-<label>Bozor nomi</label>
+      <button class="btn-primary" onclick="saveShop()">
+        💾 Saqlash
+      </button>
+    </div>
 
-<input
-id="marketName"
-type="text"
-placeholder="Masalan: Test bozori"
->
-
-</div>
-
-
-<div class="field">
-
-<label>Qator</label>
-
-<input
-id="rowName"
-type="text"
-placeholder="Masalan: 3-qator"
->
+  </div>
 
 </div>
 
-
-<div class="field">
-
-<label>Do‘kon raqami</label>
-
-<input
-id="shopNumber"
-type="text"
-placeholder="Masalan: 47"
->
-
-</div>
-
-
-<div class="modal-buttons">
-
-<button
-class="cancel-btn"
-onclick="closeAddShop()">
-
-Bekor qilish
-
-</button>
-
-<button
-class="save-btn"
-onclick="saveShop()">
-
-💾 Saqlash
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- QR MODAL -->
+<!-- ================= QR MODAL ================= -->
 
 <div id="qrModal" class="modal">
 
-<div class="modal-box">
+  <div class="modal-box">
 
-<div class="qr-box">
+    <div class="modal-title" id="qrTitle">
+      QR kod
+    </div>
 
-<div id="qrShopName" class="qr-shop-name">
-</div>
+    <div id="qrBox">
+      <div id="qrcode"></div>
 
-<div id="qrShopCode" class="qr-code-text">
-</div>
+      <input id="qrLink" readonly>
 
-<div id="qrcode"></div>
+      <div class="modal-actions">
+        <button class="btn-primary" onclick="copyQRLink()">
+          📋 Nusxalash
+        </button>
 
-<div id="qrAddress" class="qr-address">
-</div>
+        <button class="btn-green" onclick="printQR()">
+          🖨 Chop etish
+        </button>
 
-<div id="qrUrl" class="qr-url">
-</div>
+        <button class="btn-gray" onclick="closeQR()">
+          Yopish
+        </button>
+      </div>
+    </div>
 
-<div class="qr-actions">
-
-<button
-class="print-qr"
-onclick="printQR()">
-
-🖨️ Chop etish
-
-</button>
-
-<button
-class="close-qr"
-onclick="closeQR()">
-
-Yopish
-
-</button>
+  </div>
 
 </div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div id="toast" class="toast"></div>
-
 
 <script>
 
-const SUPABASE_URL =
-"https://uqgckzrmibdgxkxdfzav.supabase.co";
+const SUPABASE_URL = "https://uqgckzrmibdgxkxdfzav.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_KBodwmECQvN46zDKjOwfhg_fet6nBiy";
+  "sb_publishable_KBodwmECQvN46zDKjOwfhg_fet6nBiy";
 
+const MINI_APP_URL =
+  "https://azimabrorov011-jpg.github.io/bozorfood-miniapp/";
 
-let orders = [];
+let allOrders = [];
+let allShops = [];
+let currentFilter = "all";
 
-let shops = [];
+/* ================= SUPABASE ================= */
 
-let filter = "all";
+async function supabaseFetch(table, options = {}) {
 
-let firstLoad = true;
+  const url =
+    SUPABASE_URL +
+    "/rest/v1/" +
+    table +
+    (options.query || "");
 
-let knownIds = new Set();
+  const response = await fetch(url, {
+    method: options.method || "GET",
 
-let soundEnabled = false;
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": "Bearer " + SUPABASE_KEY,
+      "Content-Type": "application/json",
+      "Prefer": options.prefer || "return=representation"
+    },
 
-let currentQRShop = null;
+    body: options.body
+      ? JSON.stringify(options.body)
+      : undefined
+  });
 
+  const text = await response.text();
 
-const statusNames = {
+  if (!response.ok) {
+    throw new Error(text || "Supabase xatosi");
+  }
 
-new:"🆕 Yangi",
+  return text ? JSON.parse(text) : [];
+}
 
-preparing:"👨‍🍳 Tayyorlanmoqda",
+/* ================= ORDERS ================= */
 
-ready:"✅ Tayyor",
+async function loadOrders() {
 
-courier:"🛵 Kuryerda",
+  try {
 
-delivered:"📦 Yetkazildi",
+    const orders = await supabaseFetch(
+      "orders",
+      {
+        query:
+          "?select=*&order=created_at.desc"
+      }
+    );
 
-cancelled:"❌ Bekor qilingan"
+    allOrders = orders || [];
 
-};
+    renderStats();
+    renderOrders();
 
+  } catch (error) {
 
-function money(number){
+    console.error(error);
 
-return Number(number || 0)
-.toLocaleString("uz-UZ")+" so'm";
+    document.getElementById("orders").innerHTML =
+      `
+      <div class="empty">
+        ❌ Buyurtmalarni yuklashda xatolik
+        <br><br>
+        <small>${escapeHtml(error.message)}</small>
+      </div>
+      `;
+  }
+}
+
+/* ================= STATS ================= */
+
+function renderStats() {
+
+  const today = new Date();
+
+  const todayOrders = allOrders.filter(order => {
+
+    const d = new Date(order.created_at);
+
+    return (
+      d.getFullYear() === today.getFullYear() &&
+      d.getMonth() === today.getMonth() &&
+      d.getDate() === today.getDate()
+    );
+
+  });
+
+  const newOrders =
+    allOrders.filter(x => x.status === "new");
+
+  const preparingOrders =
+    allOrders.filter(x => x.status === "preparing");
+
+  const revenue =
+    todayOrders.reduce(
+      (sum, x) => sum + Number(x.total || 0),
+      0
+    );
+
+  document.getElementById("todayCount").textContent =
+    todayOrders.length;
+
+  document.getElementById("newCount").textContent =
+    newOrders.length;
+
+  document.getElementById("preparingCount").textContent =
+    preparingOrders.length;
+
+  document.getElementById("revenue").textContent =
+    revenue.toLocaleString("uz-UZ") + " so‘m";
+
+  document.getElementById("newAlert").style.display =
+    newOrders.length > 0 ? "block" : "none";
+}
+
+/* ================= FILTER ================= */
+
+function setFilter(filter, button) {
+
+  currentFilter = filter;
+
+  document.querySelectorAll(".filter")
+    .forEach(x => x.classList.remove("active"));
+
+  button.classList.add("active");
+
+  renderOrders();
+}
+
+/* ================= RENDER ORDERS ================= */
+
+function renderOrders() {
+
+  let orders = [...allOrders];
+
+  if (currentFilter !== "all") {
+
+    orders = orders.filter(
+      x => x.status === currentFilter
+    );
+
+  }
+
+  const container =
+    document.getElementById("orders");
+
+  if (!orders.length) {
+
+    container.innerHTML =
+      `
+      <div class="empty">
+        📭 Buyurtmalar topilmadi
+      </div>
+      `;
+
+    return;
+  }
+
+  container.innerHTML =
+    orders.map(renderOrder).join("");
+}
+
+/* ================= ORDER CARD ================= */
+
+function renderOrder(order) {
+
+  const statusText = {
+
+    new: "Yangi",
+
+    preparing: "Tayyorlanmoqda",
+
+    ready: "Tayyor",
+
+    courier: "Kuryerda",
+
+    delivered: "Yetkazildi",
+
+    cancelled: "Bekor qilingan"
+
+  }[order.status] || order.status;
+
+  const items =
+    Array.isArray(order.items)
+      ? order.items
+      : [];
+
+  const itemsHtml =
+    items.map(item => {
+
+      const qty =
+        Number(item.quantity || item.qty || 0);
+
+      const price =
+        Number(item.price || 0);
+
+      return `
+        <div class="item-row">
+          <span>
+            ${escapeHtml(item.name || "Mahsulot")}
+            × ${qty}
+          </span>
+
+          <span>
+            ${(price * qty).toLocaleString("uz-UZ")}
+          </span>
+        </div>
+      `;
+
+    }).join("");
+
+  const time =
+    order.created_at
+      ? new Date(order.created_at)
+          .toLocaleString("uz-UZ")
+      : "";
+
+  return `
+    <div class="order-card">
+
+      <div class="order-top">
+
+        <div class="order-number">
+          #${escapeHtml(order.order_number || order.id)}
+        </div>
+
+        <div class="status status-${order.status}">
+          ${statusText}
+        </div>
+
+      </div>
+
+      <div class="info">
+
+        🏪 <b>Do‘kon:</b>
+        ${escapeHtml(order.shop_code || "-")}
+        <br>
+
+        👤 <b>Mijoz:</b>
+        ${escapeHtml(order.customer_name || "-")}
+        <br>
+
+        📞 <b>Telefon:</b>
+        ${escapeHtml(order.phone || "-")}
+        <br>
+
+        🕐 <b>Vaqt:</b>
+        ${escapeHtml(time)}
+
+      </div>
+
+      <div class="items">
+        ${itemsHtml || "Mahsulotlar yo‘q"}
+      </div>
+
+      ${
+        order.note
+        ? `
+          <div class="info">
+            📝 <b>Izoh:</b>
+            ${escapeHtml(order.note)}
+          </div>
+        `
+        : ""
+      }
+
+      <div class="total">
+        Jami:
+        ${Number(order.total || 0).toLocaleString("uz-UZ")}
+        so‘m
+      </div>
+
+      <div class="actions">
+
+        ${getOrderButtons(order)}
+
+      </div>
+
+    </div>
+  `;
+}
+
+/* ================= ORDER BUTTONS ================= */
+
+function getOrderButtons(order) {
+
+  const id = order.id;
+
+  let html = "";
+
+  if (order.status === "new") {
+
+    html += `
+      <button class="btn-primary"
+        onclick="changeStatus(${id}, 'preparing')">
+        👨‍🍳 Tayyorlash
+      </button>
+    `;
+
+  }
+
+  if (order.status === "preparing") {
+
+    html += `
+      <button class="btn-green"
+        onclick="changeStatus(${id}, 'ready')">
+        ✅ Tayyor
+      </button>
+    `;
+
+  }
+
+  if (order.status === "ready") {
+
+    html += `
+      <button class="btn-primary"
+        onclick="changeStatus(${id}, 'courier')">
+        🚴 Kuryerga
+      </button>
+    `;
+
+  }
+
+  if (order.status === "courier") {
+
+    html += `
+      <button class="btn-green"
+        onclick="changeStatus(${id}, 'delivered')">
+        📦 Yetkazildi
+      </button>
+    `;
+
+  }
+
+  if (
+    order.status !== "delivered" &&
+    order.status !== "cancelled"
+  ) {
+
+    html += `
+      <button class="btn-red"
+        onclick="changeStatus(${id}, 'cancelled')">
+        ❌ Bekor
+      </button>
+    `;
+
+  }
+
+  return html;
+}
+
+/* ================= CHANGE STATUS ================= */
+
+async function changeStatus(id, status) {
+
+  try {
+
+    await supabaseFetch(
+      "orders?id=eq." + id,
+      {
+        method: "PATCH",
+        query: "?id=eq." + id,
+        body: {
+          status: status
+        },
+        prefer: "return=minimal"
+      }
+    );
+
+    await loadOrders();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Statusni o‘zgartirishda xatolik:\n\n" +
+      error.message
+    );
+
+  }
+}
+
+/* ================= SHOPS ================= */
+
+async function loadShops() {
+
+  try {
+
+    const shops =
+      await supabaseFetch(
+        "shops",
+        {
+          query:
+            "?select=*&order=shop_code.asc"
+        }
+      );
+
+    allShops = shops || [];
+
+    renderShops();
+
+  } catch (error) {
+
+    console.error(error);
+
+    document.getElementById("shops").innerHTML =
+      `
+      <div class="empty">
+        ❌ Do‘konlarni yuklashda xatolik
+        <br><br>
+        <small>${escapeHtml(error.message)}</small>
+      </div>
+      `;
+  }
+}
+
+/* ================= RENDER SHOPS ================= */
+
+function renderShops() {
+
+  const container =
+    document.getElementById("shops");
+
+  if (!allShops.length) {
+
+    container.innerHTML =
+      `
+      <div class="empty">
+        🏪 Hozircha do‘konlar yo‘q
+      </div>
+      `;
+
+    return;
+  }
+
+  container.innerHTML =
+    allShops.map(shop => {
+
+      return `
+        <div class="shop-card">
+
+          <div class="shop-code">
+            ${escapeHtml(shop.shop_code || "-")}
+          </div>
+
+          <div class="shop-name">
+            ${escapeHtml(
+              shop.display_name ||
+              shop.market_name ||
+              "Do‘kon"
+            )}
+          </div>
+
+          <div class="shop-address">
+            📍 ${escapeHtml(
+              shop.address ||
+              makeAddress(shop)
+            )}
+          </div>
+
+          <div class="shop-actions">
+
+            <button class="btn-primary"
+              onclick="showQR('${escapeJs(shop.shop_code)}')">
+              📱 QR kod
+            </button>
+
+            <button class="btn-gray"
+              onclick="copyShopLink('${escapeJs(shop.shop_code)}')">
+              🔗 Link
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+}
+
+/* ================= ADD SHOP ================= */
+
+function openAddShop() {
+
+  document.getElementById("shopModal").style.display =
+    "block";
+
+  document.getElementById("shopCode").value =
+    getNextShopCode();
+
+  document.getElementById("shopDisplayName").value = "";
+  document.getElementById("shopMarketName").value = "";
+  document.getElementById("shopRowName").value = "";
+  document.getElementById("shopNumber").value = "";
+}
+
+function closeShopModal() {
+
+  document.getElementById("shopModal").style.display =
+    "none";
+}
+
+/* ================= NEXT SHOP CODE ================= */
+
+function getNextShopCode() {
+
+  let max = 0;
+
+  allShops.forEach(shop => {
+
+    const match =
+      String(shop.shop_code || "")
+        .match(/^B(\d+)$/i);
+
+    if (match) {
+
+      const num =
+        parseInt(match[1], 10);
+
+      if (num > max) {
+        max = num;
+      }
+
+    }
+
+  });
+
+  return "B" +
+    String(max + 1).padStart(3, "0");
+}
+
+/* ================= ADDRESS ================= */
+
+function makeAddress(shop) {
+
+  return [
+    shop.market_name,
+    shop.row_name,
+    shop.shop_number
+      ? "Do‘kon " + shop.shop_number
+      : ""
+  ]
+    .filter(Boolean)
+    .join(", ");
+}
+
+/* ================= SAVE SHOP ================= */
+
+async function saveShop() {
+
+  const shopCode =
+    document.getElementById("shopCode").value.trim();
+
+  const displayName =
+    document.getElementById("shopDisplayName").value.trim();
+
+  const marketName =
+    document.getElementById("shopMarketName").value.trim();
+
+  const rowName =
+    document.getElementById("shopRowName").value.trim();
+
+  const shopNumber =
+    document.getElementById("shopNumber").value.trim();
+
+  if (!displayName) {
+    alert("Do‘kon nomini kiriting.");
+    return;
+  }
+
+  if (!marketName) {
+    alert("Bozor nomini kiriting.");
+    return;
+  }
+
+  if (!rowName) {
+    alert("Qatorni kiriting.");
+    return;
+  }
+
+  if (!shopNumber) {
+    alert("Do‘kon raqamini kiriting.");
+    return;
+  }
+
+  const address =
+    [
+      marketName,
+      rowName,
+      "Do‘kon " + shopNumber
+    ].join(", ");
+
+  try {
+
+    await supabaseFetch(
+      "shops",
+      {
+        method: "POST",
+        body: {
+          shop_code: shopCode,
+          market_name: marketName,
+          row_name: rowName,
+          shop_number: shopNumber,
+          display_name: displayName,
+          address: address,
+          is_active: true
+        }
+      }
+    );
+
+    closeShopModal();
+
+    await loadShops();
+
+    alert(
+      "✅ " +
+      shopCode +
+      " do‘koni muvaffaqiyatli qo‘shildi!"
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Do‘kon qo‘shishda xatolik:\n\n" +
+      error.message
+    );
+
+  }
+}
+
+/* ================= QR ================= */
+
+function showQR(shopCode) {
+
+  const shop =
+    allShops.find(
+      x => x.shop_code === shopCode
+    );
+
+  if (!shop) {
+    alert("Do‘kon topilmadi.");
+    return;
+  }
+
+  const link =
+    MINI_APP_URL +
+    "?shop=" +
+    encodeURIComponent(shopCode);
+
+  document.getElementById("qrModal").style.display =
+    "block";
+
+  document.getElementById("qrTitle").textContent =
+    "📱 " +
+    shopCode +
+    " — " +
+    (shop.display_name || "Do‘kon");
+
+  document.getElementById("qrLink").value =
+    link;
+
+  const qr =
+    document.getElementById("qrcode");
+
+  qr.innerHTML = "";
+
+  if (typeof QRCode === "undefined") {
+
+    qr.innerHTML =
+      "<p>❌ QR kutubxonasi yuklanmadi.</p>";
+
+    return;
+  }
+
+  new QRCode(qr, {
+    text: link,
+    width: 220,
+    height: 220
+  });
+}
+
+function closeQR() {
+
+  document.getElementById("qrModal").style.display =
+    "none";
+}
+
+function copyQRLink() {
+
+  const input =
+    document.getElementById("qrLink");
+
+  navigator.clipboard.writeText(input.value)
+    .then(() => {
+      alert("✅ Link nusxalandi");
+    })
+    .catch(() => {
+
+      input.select();
+      document.execCommand("copy");
+
+      alert("✅ Link nusxalandi");
+    });
+}
+
+function copyShopLink(shopCode) {
+
+  const link =
+    MINI_APP_URL +
+    "?shop=" +
+    encodeURIComponent(shopCode);
+
+  navigator.clipboard.writeText(link)
+    .then(() => {
+      alert("✅ QR link nusxalandi");
+    })
+    .catch(() => {
+
+      prompt(
+        "Linkni nusxalang:",
+        link
+      );
+
+    });
+}
+
+/* ================= PRINT QR ================= */
+
+function printQR() {
+
+  const qr =
+    document.getElementById("qrcode");
+
+  const title =
+    document.getElementById("qrTitle")
+      .textContent;
+
+  const link =
+    document.getElementById("qrLink")
+      .value;
+
+  const image =
+    qr.querySelector("img");
+
+  const canvas =
+    qr.querySelector("canvas");
+
+  let imageUrl = "";
+
+  if (image) {
+    imageUrl = image.src;
+  } else if (canvas) {
+    imageUrl = canvas.toDataURL("image/png");
+  }
+
+  if (!imageUrl) {
+
+    alert("QR kod tayyor emas.");
+
+    return;
+  }
+
+  const printWindow =
+    window.open("", "_blank");
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>${escapeHtml(title)}</title>
+
+      <style>
+        body {
+          font-family: Arial;
+          text-align: center;
+          padding-top: 40px;
+        }
+
+        img {
+          width: 280px;
+          height: 280px;
+        }
+
+        h1 {
+          margin-bottom: 25px;
+        }
+
+        p {
+          word-break: break-all;
+        }
+      </style>
+    </head>
+
+    <body>
+
+      <h1>${escapeHtml(title)}</h1>
+
+      <img src="${imageUrl}">
+
+      <p>${escapeHtml(link)}</p>
+
+      <script>
+        window.onload = function() {
+          window.print();
+        };
+      <\/script>
+
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+}
+
+/* ================= PAGE SWITCH ================= */
+
+function openOrders() {
+
+  document.getElementById("shopsPage").style.display =
+    "none";
+
+  document.getElementById("ordersPage").style.display =
+    "block";
+
+  loadOrders();
+}
+
+function openShops() {
+
+  document.getElementById("ordersPage").style.display =
+    "none";
+
+  document.getElementById("shopsPage").style.display =
+    "block";
+
+  loadShops();
+}
+
+/* ================= REFRESH ================= */
+
+async function manualRefresh() {
+
+  if (
+    document.getElementById("shopsPage").style.display !==
+    "none"
+  ) {
+
+    await loadShops();
+
+  } else {
+
+    await loadOrders();
+
+  }
 
 }
 
+/* ================= HELPERS ================= */
 
-function dateText(value){
+function escapeHtml(value) {
 
-if(!value) return "-";
-
-return new Date(value).toLocaleString(
-"uz-UZ",
-{
-day:"2-digit",
-month:"2-digit",
-hour:"2-digit",
-minute:"2-digit"
-}
-);
-
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
+function escapeJs(value) {
 
-function enableSound(){
-
-soundEnabled = true;
-
-showToast("🔔 Ovoz yoqildi");
-
-try{
-
-const audio =
-new (window.AudioContext ||
-window.webkitAudioContext)();
-
-const oscillator =
-audio.createOscillator();
-
-const gain =
-audio.createGain();
-
-oscillator.connect(gain);
-
-gain.connect(audio.destination);
-
-oscillator.frequency.value = 700;
-
-gain.gain.value = 0.2;
-
-oscillator.start();
-
-oscillator.stop(
-audio.currentTime + 0.15
-);
-
-}catch(error){
-
-console.log(error);
-
+  return String(value ?? "")
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'");
 }
 
-}
-
-
-function playSound(){
-
-if(!soundEnabled) return;
-
-try{
-
-const audio =
-new (window.AudioContext ||
-window.webkitAudioContext)();
-
-const oscillator =
-audio.createOscillator();
-
-const gain =
-audio.createGain();
-
-oscillator.connect(gain);
-
-gain.connect(audio.destination);
-
-oscillator.frequency.value = 900;
-
-gain.gain.value = 0.3;
-
-oscillator.start();
-
-setTimeout(()=>{
-
-oscillator.stop();
-
-audio.close();
-
-},500);
-
-}catch(error){
-
-console.log(error);
-
-}
-
-}
-
-
-function showToast(text){
-
-const toast =
-document.getElementById("toast");
-
-toast.textContent = text;
-
-toast.style.display = "block";
-
-setTimeout(()=>{
-
-toast.style.display = "none";
-
-},3000);
-
-}
-
-
-/* =========================
-   BUYURTMALAR
-========================= */
-
-
-async function loadOrders(){
-
-try{
-
-const response =
-await fetch(
-SUPABASE_URL+
-"/rest/v1/orders?select=*&order=created_at.desc",
-{
-headers:{
-apikey:SUPABASE_KEY,
-Authorization:"Bearer "+SUPABASE_KEY
-}
-}
-);
-
-
-if(!response.ok){
-
-const error =
-await response.text();
-
-document.getElementById("orders").innerHTML =
-`<div class="empty">
-Xatolik: ${error}
-</div>`;
-
-return;
-
-}
-
-
-const data =
-await response.json();
-
-
-let newOrders = [];
-
-
-if(!firstLoad){
-
-newOrders =
-data.filter(order =>
-!knownIds.has(String(order.id))
-);
-
-}
-
-
-orders = data;
-
-
-knownIds =
-new Set(
-data.map(order =>
-String(order.id)
-)
-);
-
-
-updateStats();
-
-renderOrders();
-
-
-if(newOrders.length){
-
-document.getElementById("alert")
-.style.display = "block";
-
-playSound();
-
-showToast(
-"🔔 Yangi buyurtma: "+
-(newOrders[0].order_number || "ORD")
-);
-
-
-setTimeout(()=>{
-
-document.getElementById("alert")
-.style.display = "none";
-
-},10000);
-
-}
-
-
-firstLoad = false;
-
-
-}catch(error){
-
-console.log(error);
-
-document.getElementById("orders").innerHTML =
-`<div class="empty">
-Server bilan bog‘lanishda xatolik.
-</div>`;
-
-}
-
-}
-
-
-function updateStats(){
-
-const today =
-new Date()
-.toISOString()
-.slice(0,10);
-
-
-const todayOrders =
-orders.filter(order =>
-String(order.created_at || "")
-.startsWith(today)
-);
-
-
-const newOrders =
-orders.filter(order =>
-order.status === "new"
-);
-
-
-const preparing =
-orders.filter(order =>
-order.status === "preparing"
-);
-
-
-const revenue =
-todayOrders
-.filter(order =>
-order.status !== "cancelled"
-)
-.reduce(
-(sum,order)=>
-sum + Number(order.total || 0),
-0
-);
-
-
-document.getElementById("todayCount")
-.textContent =
-todayOrders.length;
-
-
-document.getElementById("newCount")
-.textContent =
-newOrders.length;
-
-
-document.getElementById("preparingCount")
-.textContent =
-preparing.length;
-
-
-document.getElementById("revenue")
-.textContent =
-money(revenue);
-
-}
-
-
-function setFilter(value,button){
-
-filter = value;
-
-
-document.querySelectorAll(".filter")
-.forEach(item =>
-item.classList.remove("active")
-);
-
-
-button.classList.add("active");
-
-
-renderOrders();
-
-}
-
-
-function renderOrders(){
-
-const box =
-document.getElementById("orders");
-
-
-let list = orders;
-
-
-if(filter !== "all"){
-
-list =
-orders.filter(order =>
-order.status === filter
-);
-
-}
-
-
-if(!list.length){
-
-box.innerHTML =
-`<div class="empty">
-Hozircha buyurtmalar yo‘q.
-</div>`;
-
-return;
-
-}
-
-
-box.innerHTML =
-list.map(order=>{
-
-const items =
-Array.isArray(order.items)
-? order.items
-: [];
-
-
-const itemsHtml =
-items.map(item=>{
-
-const quantity =
-Number(
-item.quantity ||
-item.qty ||
-0
-);
-
-
-const price =
-Number(item.price || 0);
-
-
-return `
-
-<div class="item">
-
-<span>
-${item.name || "Mahsulot"} × ${quantity}
-</span>
-
-<span>
-${money(price * quantity)}
-</span>
-
-</div>
-
-`;
-
-}).join("");
-
-
-const status =
-order.status || "new";
-
-
-return `
-
-<div class="order ${status === "new" ? "new" : ""}">
-
-<div class="order-top">
-
-<div>
-
-<div class="order-number">
-${order.order_number || "ORD"}
-</div>
-
-<div class="time">
-🕐 ${dateText(order.created_at)}
-</div>
-
-</div>
-
-<div class="badge">
-${statusNames[status] || status}
-</div>
-
-</div>
-
-
-<div class="customer">
-
-🏪 <b>Do‘kon:</b>
-${order.shop_code || "-"}
-
-<br>
-
-👤 <b>Mijoz:</b>
-${order.customer_name || "-"}
-
-<br>
-
-📞 <b>Telefon:</b>
-${order.phone || "-"}
-
-</div>
-
-
-<div class="items">
-
-${itemsHtml || "Mahsulot yo‘q"}
-
-</div>
-
-
-${
-order.note
-?
-`
-<div class="note">
-
-📝 <b>Izoh:</b><br>
-
-${order.note}
-
-</div>
-`
-:""
-}
-
-
-<div class="total">
-
-<span>Jami</span>
-
-<span>
-${money(order.total)}
-</span>
-
-</div>
-
-
-<div class="actions">
-
-
-${
-status === "new"
-?
-`
-<button
-class="action"
-onclick="changeStatus(${order.id},'preparing')">
-
-👨‍🍳 Tayyorlashni boshlash
-
-</button>
-`
-:""
-}
-
-
-${
-status === "preparing"
-?
-`
-<button
-class="action"
-onclick="changeStatus(${order.id},'ready')">
-
-✅ Tayyor
-
-</button>
-`
-:""
-}
-
-
-${
-status === "ready"
-?
-`
-<button
-class="action"
-onclick="changeStatus(${order.id},'courier')">
-
-🛵 Kuryerga berish
-
-</button>
-`
-:""
-}
-
-
-${
-status === "courier"
-?
-`
-<button
-class="action"
-onclick="changeStatus(${order.id},'delivered')">
-
-📦 Yetkazildi
-
-</button>
-`
-:""
-}
-
-
-${
-status !== "delivered" &&
-status !== "cancelled"
-?
-`
-<button
-class="action"
-onclick="changeStatus(${order.id},'cancelled')">
-
-❌ Bekor qilish
-
-</button>
-`
-:""
-}
-
-
-</div>
-
-</div>
-
-`;
-
-}).join("");
-
-}
-
-
-async function changeStatus(id,newStatus){
-
-const order =
-orders.find(item =>
-item.id === id
-);
-
-
-if(!order) return;
-
-
-const question =
-newStatus === "cancelled"
-?
-"Buyurtmani bekor qilasizmi?"
-:
-"Statusni "+
-statusNames[newStatus]+
-" ga o‘zgartirasizmi?";
-
-
-if(!confirm(question))
-return;
-
-
-try{
-
-const response =
-await fetch(
-SUPABASE_URL+
-"/rest/v1/orders?id=eq."+id,
-{
-method:"PATCH",
-
-headers:{
-apikey:SUPABASE_KEY,
-Authorization:"Bearer "+SUPABASE_KEY,
-"Content-Type":"application/json",
-Prefer:"return=minimal"
-},
-
-body:JSON.stringify({
-status:newStatus
-})
-
-}
-);
-
-
-if(!response.ok){
-
-const error =
-await response.text();
-
-alert(
-"Xatolik:\n\n"+
-error
-);
-
-return;
-
-}
-
-
-order.status =
-newStatus;
-
-
-updateStats();
-
-renderOrders();
-
-
-showToast(
-"✅ "+
-(order.order_number || "Buyurtma")+
-" yangilandi"
-);
-
-
-}catch(error){
-
-alert(
-"Server bilan bog‘lanishda xatolik."
-);
-
-}
-
-}
-
-
-/* =========================
-   DO‘KONLAR
-========================= */
-
-
-function openShops(){
-
-document.getElementById("ordersPage")
-.style.display = "none";
-
-document.getElementById("shopsPage")
-.style.display = "block";
-
-loadShops();
-
-}
-
-
-function openOrders(){
-
-document.getElementById("shopsPage")
-.style.display = "none";
-
-document.getElementById("ordersPage")
-.style.display = "block";
+/* ================= START ================= */
 
 loadOrders();
 
-}
+setInterval(() => {
 
+  if (
+    document.getElementById("ordersPage").style.display !==
+    "none"
+  ) {
 
-async function loadShops(){
+    loadOrders();
 
-const box =
-document.getElementById("shopsList");
+  }
 
-box.innerHTML =
-`<div class="empty">
-Do‘konlar yuklanmoqda...
-</div>`;
-
-
-try{
-
-const response =
-await fetch(
-SUPABASE_URL+
-"/rest/v1/shops?select=*&order=shop_code.asc",
-{
-headers:{
-apikey:SUPABASE_KEY,
-Authorization:"Bearer "+SUPABASE_KEY
-}
-}
-);
-
-
-if(!response.ok){
-
-const error =
-await response.text();
-
-box.innerHTML =
-`<div class="empty">
-Xatolik: ${error}
-</div>`;
-
-return;
-
-}
-
-
-shops =
-await response.json();
-
-
-renderShops();
-
-
-}catch(error){
-
-console.log(error);
-
-box.innerHTML =
-`<div class="empty">
-Server bilan bog‘lanishda xatolik.
-</div>`;
-
-}
-
-}
-
-
-function renderShops(){
-
-const box =
-document.getElementById("shopsList");
-
-
-if(!shops.length){
-
-box.innerHTML =
-`<div class="empty">
-
-Hozircha do‘konlar yo‘q.
-
-<br><br>
-
-Yuqoridagi
-<b>➕ Yangi do‘kon</b>
-tugmasini bosing.
-
-</div>`;
-
-return;
-
-}
-
-
-box.innerHTML =
-shops.map(shop=>{
-
-const address =
-shop.address ||
-[
-shop.market_name,
-shop.row_name,
-shop.shop_number
-?
-"Do‘kon "+shop.shop_number
-:null
-]
-.filter(Boolean)
-.join(", ");
-
-
-return `
-
-<div class="shop-card">
-
-<div class="shop-card-top">
-
-<div>
-
-<div class="shop-code">
-${shop.shop_code || "-"}
-</div>
-
-<div class="shop-name">
-${shop.display_name || "Nomsiz do‘kon"}
-</div>
-
-<div class="shop-address">
-📍 ${address || "Manzil kiritilmagan"}
-</div>
-
-</div>
-
-<div class="badge">
-${shop.is_active === false ? "❌ Faol emas" : "✅ Faol"}
-</div>
-
-</div>
-
-
-<div class="shop-buttons">
-
-<button
-class="shop-btn qr"
-onclick="showQR('${shop.shop_code}')">
-
-📱 QR
-
-</button>
-
-
-<button
-class="shop-btn print"
-onclick="showQR('${shop.shop_code}',true)">
-
-🖨️ Chop etish
-
-</button>
-
-
-<button
-class="shop-btn link"
-onclick="copyShopLink('${shop.shop_code}')">
-
-🔗 Havola
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-}).join("");
-
-}
-
-
-/* =========================
-   YANGI DO‘KON
-========================= */
-
-
-function openAddShop(){
-
-document.getElementById("shopModal")
-.style.display = "block";
-
-document.getElementById("shopDisplayName")
-.value = "";
-
-document.getElementById("marketName")
-.value = "";
-
-document.getElementById("rowName")
-.value = "";
-
-document.getElementById("shopNumber")
-.value = "";
-
-}
-
-
-function closeAddShop(){
-
-document.getElementById("shopModal")
-.style.display = "none";
-
-}
-
-
-function generateNextShopCode(){
-
-let maxNumber = 0;
-
-
-shops.forEach(shop=>{
-
-const match =
-String(shop.shop_code || "")
-.match(/^B(\d+)$/);
-
-
-if(match){
-
-maxNumber =
-Math.max(
-maxNumber,
-Number(match[1])
-);
-
-}
-
-});
-
-
-return "B"+
-String(maxNumber + 1)
-.padStart(3,"0");
-
-}
-
-
-async function saveShop(){
-
-const displayName =
-document.getElementById("shopDisplayName")
-.value.trim();
-
-
-const marketName =
-document.getElementById("marketName")
-.value.trim();
-
-
-const rowName =
-document.getElementById("rowName")
-.value.trim();
-
-
-const shopNumber =
-document.getElementById("shopNumber")
-.value.trim();
-
-
-if(!displayName){
-
-alert("Do‘kon nomini kiriting.");
-
-return;
-
-}
-
-
-if(!marketName){
-
-alert("Bozor nomini kiriting.");
-
-return;
-
-}
-
-
-if(!rowName){
-
-alert("Qatorni kiriting.");
-
-return;
-
-}
-
-
-if(!shopNumber){
-
-alert("Do‘kon raqamini kiriting.");
-
-return;
-
-}
-
-
-const shopCode =
-generateNextShopCode();
-
-
-const address =
-[
-marketName,
-rowName,
-"Do‘kon "+shopNumber
-]
-.join(", ");
-
-
-try{
-
-const response =
-await fetch(
-SUPABASE_URL+
-"/rest/v1/shops",
-{
-method:"POST",
-
-headers:{
-apikey:SUPABASE_KEY,
-Authorization:"Bearer "+SUPABASE_KEY,
-"Content-Type":"application/json",
-Prefer:"return=representation"
-},
-
-body:JSON.stringify({
-
-shop_code:shopCode,
-
-market_name:marketName,
-
-row_name:rowName,
-
-shop_number:shopNumber,
-
-display_name:displayName,
-
-address:address,
-
-is_active:true
-
-})
-
-}
-);
-
-
-if(!response.ok){
-
-const error =
-await response.text();
-
-alert(
-"Do‘konni saqlashda xatolik:\n\n"+
-error
-);
-
-return;
-
-}
-
-
-closeAddShop();
-
-showToast(
-"✅ "+
-shopCode+
-" do‘kon qo‘shildi"
-);
-
-
-await loadShops();
-
-
-}catch(error){
-
-console.log(error);
-
-alert(
-"Server bilan bog‘lanishda xatolik."
-);
-
-}
-
-}
-
-
-/* =========================
-   QR
-========================= */
-
-
-function getShopLink(shopCode){
-
-return (
-"https://azimabrorov011-jpg.github.io/bozorfood-miniapp/?shop="+
-encodeURIComponent(shopCode)
-);
-
-}
-
-
-function showQR(shopCode,autoPrint=false){
-
-const shop =
-shops.find(item =>
-item.shop_code === shopCode
-);
-
-
-if(!shop){
-
-alert("Do‘kon topilmadi.");
-
-return;
-
-}
-
-
-currentQRShop = shop;
-
-
-const address =
-shop.address ||
-[
-shop.market_name,
-shop.row_name,
-shop.shop_number
-?
-"Do‘kon "+shop.shop_number
-:null
-]
-.filter(Boolean)
-.join(", ");
-
-
-document.getElementById("qrShopName")
-.textContent =
-shop.display_name || "RastaGo";
-
-
-document.getElementById("qrShopCode")
-.textContent =
-shop.shop_code;
-
-
-document.getElementById("qrAddress")
-.textContent =
-"📍 "+address;
-
-
-const link =
-getShopLink(shop.shop_code);
-
-
-document.getElementById("qrUrl")
-.textContent =
-link;
-
-
-const qr =
-document.getElementById("qrcode");
-
-
-qr.innerHTML = "";
-
-
-new QRCode(qr,{
-
-text:link,
-
-width:220,
-
-height:220,
-
-correctLevel:QRCode.CorrectLevel.H
-
-});
-
-
-document.getElementById("qrModal")
-.style.display = "block";
-
-
-if(autoPrint){
-
-setTimeout(()=>{
-
-printQR();
-
-},700);
-
-}
-
-}
-
-
-function closeQR(){
-
-document.getElementById("qrModal")
-.style.display = "none";
-
-currentQRShop = null;
-
-}
-
-
-async function copyShopLink(shopCode){
-
-const link =
-getShopLink(shopCode);
-
-
-try{
-
-await navigator.clipboard.writeText(link);
-
-showToast("🔗 QR havolasi nusxalandi");
-
-}catch(error){
-
-prompt(
-"QR havolasi:",
-link
-);
-
-}
-
-}
-
-
-function printQR(){
-
-if(!currentQRShop){
-
-return;
-
-}
-
-
-const shop =
-currentQRShop;
-
-
-const address =
-shop.address ||
-[
-shop.market_name,
-shop.row_name,
-shop.shop_number
-?
-"Do‘kon "+shop.shop_number
-:null
-]
-.filter(Boolean)
-.join(", ");
-
-
-const link =
-getShopLink(shop.shop_code);
-
-
-const qrImage =
-document.querySelector("#qrcode img");
-
-
-if(!qrImage){
-
-alert("QR hali tayyor emas.");
-
-return;
-
-}
-
-
-const printWindow =
-window.open(
-"",
-"_blank",
-"width=600,height=800"
-);
-
-
-if(!printWindow){
-
-alert(
-"Chop etish oynasi bloklangan. Brauzerda popupga ruxsat bering."
-);
-
-return;
-
-}
-
-
-printWindow.document.write(`
-
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<title>
-${shop.shop_code} QR
-</title>
-
-<style>
-
-body{
-
-font-family:Arial,sans-serif;
-
-text-align:center;
-
-padding:40px;
-
-}
-
-h1{
-
-font-size:28px;
-
-margin-bottom:8px;
-
-}
-
-.code{
-
-font-size:20px;
-
-font-weight:bold;
-
-color:#555;
-
-}
-
-.address{
-
-font-size:18px;
-
-margin:20px auto;
-
-max-width:450px;
-
-line-height:1.5;
-
-}
-
-img{
-
-width:300px;
-
-height:300px;
-
-margin:20px;
-
-}
-
-.text{
-
-font-size:20px;
-
-font-weight:bold;
-
-margin-top:15px;
-
-}
-
-.small{
-
-font-size:12px;
-
-color:#777;
-
-margin-top:20px;
-
-word-break:break-all;
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h1>
-🍽 RastaGo
-</h1>
-
-<h2>
-${shop.display_name || ""}
-</h2>
-
-<div class="code">
-${shop.shop_code}
-</div>
-
-<img
-src="${qrImage.src}"
->
-
-<div class="address">
-📍 ${address}
-</div>
-
-<div class="text">
-📱 QR kodni skaner qiling va ovqat buyurtma qiling
-</div>
-
-<div class="small">
-${link}
-</div>
-
-<script>
-
-window.onload=function(){
-
-window.print();
-
-};
-
-</script>
-
-</body>
-
-</html>
-
-`);
-
-
-printWindow.document.close();
-
-}
-
-
-/* =========================
-   REFRESH
-========================= */
-
-
-async function manualRefresh(){
-
-await loadOrders();
-
-showToast("🔄 Yangilandi");
-
-}
-
-
-/* =========================
-   START
-========================= */
-
-
-loadOrders();
-
-
-setInterval(
-loadOrders,
-15000
-);
+}, 15000);
 
 </script>
 
