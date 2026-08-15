@@ -1,97 +1,119 @@
-/* RastaGo / BozorFood — Premium Telegram UX */
+/* RastaGo / BozorFood — Premium Customer JS v2 */
 
 (() => {
   const tg = window.Telegram?.WebApp;
 
-  if (tg) {
-    try {
-      tg.ready();
-      tg.expand();
+  /* =========================
+     TELEGRAM INITIALIZATION
+  ========================= */
 
-      tg.setHeaderColor?.("#111827");
-      tg.setBackgroundColor?.("#f5f7fb");
+  try {
+    tg?.ready();
+    tg?.expand();
 
-      // Telegram loading screenni tezroq yopish
-      tg.disableVerticalSwipes?.();
+    tg?.disableVerticalSwipes?.();
 
-      // Main button ranglari
-      if (tg.MainButton) {
-        tg.MainButton.color = "#111827";
-        tg.MainButton.textColor = "#ffffff";
-      }
-    } catch (e) {
-      console.debug("Telegram UX:", e);
-    }
+    tg?.setHeaderColor?.("#f5f7fb");
+    tg?.setBackgroundColor?.("#f5f7fb");
+  } catch (error) {
+    console.warn("Telegram WebApp initialization:", error);
   }
 
-  // Search input uchun mobil UX
-  document.addEventListener("DOMContentLoaded", () => {
-    const searchInputs = document.querySelectorAll(
-      'input[type="search"], input[placeholder*="Qidir"], input[placeholder*="qidir"]'
-    );
+  /* =========================
+     SEARCH OPTIMIZATION
+  ========================= */
 
-    searchInputs.forEach(input => {
-      input.setAttribute("autocomplete", "off");
-      input.setAttribute("autocorrect", "off");
-      input.setAttribute("autocapitalize", "none");
-      input.setAttribute("spellcheck", "false");
-    });
-  });
+  const search = document.getElementById("searchInput");
 
-  // Telegram haptic feedback
+  if (search) {
+    search.autocomplete = "off";
+    search.autocorrect = "off";
+    search.autocapitalize = "none";
+    search.spellcheck = false;
+  }
+
+  /* =========================
+     HAPTIC FEEDBACK
+  ========================= */
+
   window.rastaHaptic = (type = "light") => {
     try {
-      if (!tg?.HapticFeedback) return;
+      tg?.HapticFeedback?.impactOccurred?.(type);
+    } catch (error) {
+      console.warn("Haptic error:", error);
+    }
+  };
 
-      if (type === "success") {
-        tg.HapticFeedback.notificationOccurred("success");
-      } else if (type === "error") {
-        tg.HapticFeedback.notificationOccurred("error");
-      } else if (type === "warning") {
-        tg.HapticFeedback.notificationOccurred("warning");
+  /* =========================
+     BUTTON HAPTICS
+     
+     Actual classes used by app.js:
+     .add
+     .cat
+     #cartButton
+     #orderButton
+     #closeCart
+     #doneButton
+  ========================= */
+
+  document.addEventListener(
+    "click",
+    (event) => {
+
+      const button = event.target.closest(
+        ".add, .cat, #cartButton, #orderButton, #closeCart, #doneButton"
+      );
+
+      if (!button) return;
+
+      if (button.id === "orderButton") {
+        window.rastaHaptic("medium");
       } else {
-        tg.HapticFeedback.impactOccurred("light");
+        window.rastaHaptic("light");
       }
-    } catch (e) {
-      console.debug("Haptic:", e);
+    },
+    {
+      passive: true
     }
+  );
+
+  /* =========================
+     NETWORK STATUS
+  ========================= */
+
+  const updateNetworkStatus = () => {
+
+    document.body.classList.toggle(
+      "is-offline",
+      navigator.onLine === false
+    );
+
   };
 
-  // Tugmalarga yengil haptic
-  document.addEventListener("click", event => {
-    const button = event.target.closest("button");
+  window.addEventListener(
+    "online",
+    updateNetworkStatus
+  );
 
-    if (!button) return;
+  window.addEventListener(
+    "offline",
+    updateNetworkStatus
+  );
 
-    if (
-      button.matches(
-        ".add-btn, .add-button, button.add, .item-add, .category, .category-btn, .category-pill"
-      )
-    ) {
-      window.rastaHaptic("light");
-    }
-  });
+  updateNetworkStatus();
 
-  // Online/offline holatini kuzatish
-  function updateConnection() {
-    const online = navigator.onLine;
+  /* =========================
+     PREMIUM API
+  ========================= */
 
-    document.documentElement.classList.toggle("offline", !online);
-
-    if (!online) {
-      console.warn("RastaGo: internet connection lost");
-    }
-  }
-
-  window.addEventListener("online", updateConnection);
-  window.addEventListener("offline", updateConnection);
-
-  updateConnection();
-
-  // Global premium helper
   window.RastaGoPremium = {
+
+    version: "2.0",
+
     haptic: window.rastaHaptic,
-    telegram: tg,
-    version: "1.0.0"
+
+    telegram: tg || null
+
   };
+
 })();
