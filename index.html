@@ -2,262 +2,396 @@
 <html lang="uz">
 
 <head>
+
   <meta charset="UTF-8">
 
   <meta
     name="viewport"
-    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
   >
 
-  <title>BozorFood</title>
+  <meta
+    name="theme-color"
+    content="#f5f7fb"
+  >
 
-  <!-- Telegram Mini App -->
+  <meta
+    name="format-detection"
+    content="telephone=no"
+  >
+
+  <title>BozorFood — Bozor ichida issiq ovqat</title>
+
+  <!-- =====================================================
+       TELEGRAM MINI APP
+       Bu script BIRINCHI yuklanadi.
+       ===================================================== -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <!-- Asosiy dizayn -->
+
+  <!-- =====================================================
+       ASOSIY CSS
+       ===================================================== -->
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Premium dizayn -->
   <link rel="stylesheet" href="premium.css">
+
+
+  <!-- =====================================================
+       SUPABASE REALTIME
+       ===================================================== -->
+  <script src="realtime.js"></script>
+
 </head>
 
 
 <body>
 
-<div class="app">
+  <!-- =====================================================
+       APP
+       ===================================================== -->
 
-  <!-- HEADER -->
-  <header class="topbar">
-
-    <div>
-
-      <div class="brand">
-        🍽 BozorFood
-      </div>
-
-      <div class="subtitle">
-        Bozor ichida issiq ovqat — joyingizgacha
-      </div>
-
-    </div>
-
-    <div class="avatar">
-      👤
-    </div>
-
-  </header>
+  <div class="app">
 
 
-  <main>
+    <!-- ===================================================
+         HEADER
+         =================================================== -->
 
-    <!-- LOCATION -->
-    <section class="location-card">
+    <header class="topbar">
 
-      <div class="pin">
-        📍
-      </div>
+      <div>
 
-      <div class="location-info">
-
-        <div class="label">
-          Sizning joyingiz
+        <div class="brand">
+          🍽 BozorFood
         </div>
+
+        <div class="subtitle">
+          Bozor ichida issiq ovqat — joyingizgacha
+        </div>
+
+      </div>
+
+
+      <div class="avatar">
+        👤
+      </div>
+
+    </header>
+
+
+
+    <!-- ===================================================
+         MAIN
+         =================================================== -->
+
+    <main>
+
+
+      <!-- =================================================
+           LOCATION / SHOP
+           ================================================= -->
+
+      <section class="location-card">
+
+        <div class="pin">
+          📍
+        </div>
+
+
+        <div class="location-info">
+
+          <div class="label">
+            Sizning joyingiz
+          </div>
+
+
+          <div
+            id="shopName"
+            class="shop-name"
+          >
+            Aniqlanmoqda...
+          </div>
+
+
+          <div
+            id="shopLocation"
+            class="shop-location"
+          >
+            ...
+          </div>
+
+        </div>
+
 
         <div
-          id="shopName"
-          class="shop-name"
+          id="shopId"
+          class="shop-id"
         >
-          Aniqlanmoqda...
+          B001
         </div>
 
-        <div
-          id="shopLocation"
-          class="shop-location"
-        >
-          ...
-        </div>
-
-      </div>
-
-      <div
-        id="shopId"
-        class="shop-id"
-      >
-        B001
-      </div>
-
-    </section>
+      </section>
 
 
-    <!-- SEARCH -->
-    <div class="search">
 
-      <span>
-        🔎
-      </span>
+      <!-- =================================================
+           SEARCH
+           ================================================= -->
 
-      <input
-        id="searchInput"
-        type="search"
-        placeholder="Ovqat qidiring..."
-      >
-
-    </div>
-
-
-    <!-- CATEGORIES -->
-    <div
-      id="categories"
-      class="categories"
-    ></div>
-
-
-    <!-- MENU -->
-    <section
-      id="menu"
-      class="menu"
-    ></section>
-
-  </main>
-
-
-  <!-- CART BUTTON -->
-  <button
-    id="cartButton"
-    class="cart-button hidden"
-  >
-
-    <span>
-      🛒 Savatcha
-    </span>
-
-    <span id="cartCount">
-      0
-    </span>
-
-    <strong id="cartTotal">
-      0 so'm
-    </strong>
-
-  </button>
-
-</div>
-
-
-<!-- CART MODAL -->
-<div
-  id="cartModal"
-  class="modal hidden"
->
-
-  <div class="sheet">
-
-    <div class="sheet-head">
-
-      <h2>
-        🛒 Savatcha
-      </h2>
-
-      <button id="closeCart">
-        ✕
-      </button>
-
-    </div>
-
-
-    <div
-      id="cartItems"
-    ></div>
-
-
-    <div class="checkout">
-
-      <div class="row">
+      <div class="search">
 
         <span>
-          Jami
+          🔎
         </span>
 
-        <strong id="checkoutTotal">
-          0 so'm
-        </strong>
+
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Ovqat qidiring..."
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="none"
+          spellcheck="false"
+        >
 
       </div>
 
 
-      <input
-        id="phone"
-        placeholder="Telefon raqam"
-        inputmode="tel"
-      >
+
+      <!-- =================================================
+           CATEGORIES
+           ================================================= -->
+
+      <div
+        id="categories"
+        class="categories"
+      ></div>
 
 
-      <textarea
-        id="note"
-        placeholder="Izoh: masalan, 3-qator 47-do‘kon oldiga..."
-      ></textarea>
+
+      <!-- =================================================
+           MENU
+           ================================================= -->
+
+      <section
+        id="menu"
+        class="menu"
+      ></section>
+
+
+    </main>
+
+
+
+    <!-- ===================================================
+         CART FLOATING BUTTON
+         =================================================== -->
+
+    <button
+      id="cartButton"
+      class="cart-button hidden"
+      type="button"
+    >
+
+      <span>
+        🛒 Savatcha
+      </span>
+
+
+      <span id="cartCount">
+        0
+      </span>
+
+
+      <strong id="cartTotal">
+        0 so'm
+      </strong>
+
+    </button>
+
+
+  </div>
+
+
+
+  <!-- =====================================================
+       CART MODAL
+       ===================================================== -->
+
+  <div
+    id="cartModal"
+    class="modal hidden"
+  >
+
+    <div class="sheet">
+
+
+      <!-- HEADER -->
+
+      <div class="sheet-head">
+
+        <h2>
+          🛒 Savatcha
+        </h2>
+
+
+        <button
+          id="closeCart"
+          type="button"
+          aria-label="Savatchani yopish"
+        >
+          ✕
+        </button>
+
+      </div>
+
+
+
+      <!-- CART ITEMS -->
+
+      <div
+        id="cartItems"
+      ></div>
+
+
+
+      <!-- CHECKOUT -->
+
+      <div class="checkout">
+
+
+        <!-- TOTAL -->
+
+        <div class="row">
+
+          <span>
+            Jami
+          </span>
+
+
+          <strong id="checkoutTotal">
+            0 so'm
+          </strong>
+
+        </div>
+
+
+
+        <!-- PHONE -->
+
+        <input
+          id="phone"
+          type="tel"
+          placeholder="Telefon raqam"
+          inputmode="tel"
+          autocomplete="tel"
+        >
+
+
+
+        <!-- NOTE -->
+
+        <textarea
+          id="note"
+          placeholder="Izoh: masalan, 3-qator 47-do‘kon oldiga..."
+          rows="3"
+        ></textarea>
+
+
+
+        <!-- ORDER -->
+
+        <button
+          id="orderButton"
+          type="button"
+        >
+          Buyurtma berish
+        </button>
+
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       SUCCESS MODAL
+       ===================================================== -->
+
+  <div
+    id="successModal"
+    class="modal hidden"
+  >
+
+    <div class="sheet success">
+
+
+      <div class="success-icon">
+        ✅
+      </div>
+
+
+      <h2>
+        Buyurtma qabul qilindi!
+      </h2>
+
+
+      <p id="orderNumber"></p>
+
+
+      <p class="muted">
+        Oshxona tayyorlaydi, kuryer esa aynan sizning
+        joyingizga olib boradi.
+      </p>
 
 
       <button
-        id="orderButton"
+        id="doneButton"
+        type="button"
       >
-        Buyurtma berish
+        Yopish
       </button>
 
+
     </div>
 
   </div>
 
-</div>
 
 
-<!-- SUCCESS MODAL -->
-<div
-  id="successModal"
-  class="modal hidden"
->
+  <!-- =====================================================
+       JAVASCRIPT
+       TARTIBI JUDA MUHIM
+       =====================================================
 
-  <div class="sheet success">
+       1. app.js
+          Asosiy Mini App logikasi.
 
-    <div class="success-icon">
-      ✅
-    </div>
+       2. secure-order.js
+          Buyurtmani xavfsiz RPC orqali yuborish.
 
-    <h2>
-      Buyurtma qabul qilindi!
-    </h2>
+       3. premium.js
+          Premium UX, Telegram haptic va WebApp.
 
-    <p id="orderNumber"></p>
+       4. realtime.js
+          Supabase Realtime event engine.
 
-    <p class="muted">
-      Oshxona tayyorlaydi, kuryer esa aynan sizning joyingizga olib boradi.
-    </p>
-
-    <button
-      id="doneButton"
-    >
-      Yopish
-    </button>
-
-  </div>
-
-</div>
+       ===================================================== -->
 
 
-<!--
-  SCRIPT TARTIBI MUHIM:
+  <script src="app.js"></script>
 
-  1. app.js — asosiy Mini App
-  2. secure-order.js — xavfsiz buyurtma RPC bridge
-  3. premium.js — Premium UX / Telegram / haptic
--->
+  <script src="secure-order.js"></script>
 
-<script src="app.js"></script>
-
-<script src="secure-order.js"></script>
-
-<script src="premium.js"></script>
+  <script src="premium.js"></script>
 
 
 </body>
+
 </html>
