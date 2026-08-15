@@ -1,1 +1,495 @@
+/* RastaGo / BozorFood — Premium Customer UI */
 
+:root {
+  --rg-bg: #f5f7fb;
+  --rg-card: rgba(255,255,255,.88);
+  --rg-text: #111827;
+  --rg-muted: #6b7280;
+  --rg-border: rgba(17,24,39,.08);
+  --rg-primary: #111827;
+  --rg-accent: #ff7a00;
+  --rg-shadow: 0 12px 35px rgba(17,24,39,.08);
+  --rg-radius: 22px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at 90% 0%, rgba(255,122,0,.12), transparent 28%),
+    radial-gradient(circle at 0% 25%, rgba(99,102,241,.08), transparent 30%),
+    var(--rg-bg);
+  color: var(--rg-text);
+}
+
+/* Main app container */
+.app,
+.container,
+main {
+  position: relative;
+}
+
+/* Top header */
+.topbar,
+.header,
+.app-header {
+  background: rgba(255,255,255,.82) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--rg-border);
+  box-shadow: 0 5px 20px rgba(17,24,39,.04);
+}
+
+/* Shop / location card */
+.location-card,
+.shop-card,
+.shop-info,
+.location {
+  background: var(--rg-card);
+  border: 1px solid var(--rg-border);
+  border-radius: var(--rg-radius);
+  box-shadow: var(--rg-shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.location-card:active,
+.shop-card:active {
+  transform: scale(.985);
+}
+
+/* Search */
+.search,
+.search-box,
+input[type="search"] {
+  border: 1px solid var(--rg-border) !important;
+  background: rgba(255,255,255,.9) !important;
+  border-radius: 17px !important;
+  box-shadow: 0 7px 22px rgba(17,24,39,.05);
+  transition: all .2s ease;
+}
+
+.search:focus,
+.search-box:focus,
+input[type="search"]:focus {
+  outline: none;
+  border-color: rgba(255,122,0,.4) !important;
+  box-shadow: 0 0 0 4px rgba(255,122,0,.10),
+              0 8px 25px rgba(17,24,39,.07);
+}
+
+/* Category pills */
+.categories {
+  gap: 9px !important;
+}
+
+.category,
+.category-btn,
+.category-pill {
+  border: 1px solid var(--rg-border) !important;
+  background: rgba(255,255,255,.8) !important;
+  border-radius: 999px !important;
+  transition: all .2s ease;
+  white-space: nowrap;
+}
+
+.category.active,
+.category-btn.active,
+.category-pill.active {
+  background: var(--rg-primary) !important;
+  color: white !important;
+  border-color: var(--rg-primary) !important;
+  box-shadow: 0 7px 18px rgba(17,24,39,.18);
+}
+
+/* Menu cards */
+.menu-item,
+.food-card,
+.product-card,
+.item-card {
+  background: rgba(255,255,255,.92) !important;
+  border: 1px solid var(--rg-border) !important;
+  border-radius: 21px !important;
+  box-shadow: 0 8px 28px rgba(17,24,39,.055);
+  overflow: hidden;
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease;
+}
+
+.menu-item:hover,
+.food-card:hover,
+.product-card:hover,
+.item-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(17,24,39,.10);
+  border-color: rgba(255,122,0,.16) !important;
+}
+
+.menu-item:active,
+.food-card:active,
+.product-card:active,
+.item-card:active {
+  transform: scale(.985);
+}
+
+/* Product images */
+.menu-item img,
+.food-card img,
+.product-card img,
+.item-card img {
+  transition: transform .35s ease;
+}
+
+.menu-item:hover img,
+.food-card:hover img,
+.product-card:hover img,
+.item-card:hover img {
+  transform: scale(1.035);
+}
+
+/* Price */
+.price,
+.item-price,
+.product-price {
+  font-weight: 800 !important;
+  letter-spacing: -.3px;
+}
+
+/* Add button */
+.add-btn,
+.add-button,
+button.add,
+.item-add {
+  background: var(--rg-primary) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 14px !important;
+  min-height: 42px;
+  font-weight: 700;
+  box-shadow: 0 7px 17px rgba(17,24,39,.15);
+  transition: all .18s ease;
+}
+
+.add-btn:hover,
+.add-button:hover,
+button.add:hover,
+.item-add:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 23px rgba(17,24,39,.20);
+}
+
+.add-btn:active,
+.add-button:active,
+button.add:active,
+.item-add:active {
+  transform: scale(.94);
+}
+
+/* Quantity controls */
+.quantity,
+.qty,
+.quantity-control {
+  background: #f3f4f6;
+  border-radius: 13px;
+  padding: 3px;
+}
+
+.quantity button,
+.qty button,
+.quantity-control button {
+  border: none;
+  background: white;
+  border-radius: 10px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+/* Floating cart */
+.cart-button,
+#cartButton,
+.floating-cart {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 1000;
+
+  background: linear-gradient(135deg, #111827, #252b38) !important;
+  color: white !important;
+
+  border: 1px solid rgba(255,255,255,.08) !important;
+  border-radius: 20px !important;
+
+  min-height: 58px;
+  box-shadow:
+    0 14px 35px rgba(17,24,39,.25),
+    0 4px 10px rgba(17,24,39,.12);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  font-weight: 800;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.cart-button:hover,
+#cartButton:hover,
+.floating-cart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 42px rgba(17,24,39,.30);
+}
+
+.cart-button:active,
+#cartButton:active,
+.floating-cart:active {
+  transform: scale(.97);
+}
+
+/* Cart badge */
+.cart-count,
+.cart-badge,
+.badge {
+  background: var(--rg-accent) !important;
+  color: white !important;
+  font-weight: 800;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(255,122,0,.3);
+}
+
+/* Bottom sheet / checkout */
+.sheet,
+.modal,
+.cart-sheet,
+.checkout-sheet {
+  background: rgba(255,255,255,.97) !important;
+  border-radius: 28px 28px 0 0 !important;
+  box-shadow: 0 -18px 50px rgba(17,24,39,.15);
+  border-top: 1px solid var(--rg-border);
+}
+
+/* Sheet handle */
+.sheet::before,
+.modal::before {
+  content: "";
+  display: block;
+  width: 42px;
+  height: 5px;
+  border-radius: 99px;
+  background: #d1d5db;
+  margin: 10px auto 16px;
+}
+
+/* Checkout inputs */
+.checkout input,
+.checkout textarea,
+.checkout select,
+.modal input,
+.modal textarea,
+.modal select {
+  background: #f8fafc !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 15px !important;
+  min-height: 48px;
+  transition: all .2s ease;
+}
+
+.checkout input:focus,
+.checkout textarea:focus,
+.checkout select:focus,
+.modal input:focus,
+.modal textarea:focus,
+.modal select:focus {
+  outline: none;
+  border-color: rgba(255,122,0,.45) !important;
+  box-shadow: 0 0 0 4px rgba(255,122,0,.09);
+}
+
+/* Main checkout button */
+.checkout button,
+.checkout-btn,
+.submit-order,
+#submitOrder {
+  width: 100%;
+  min-height: 54px;
+
+  border: none !important;
+  border-radius: 17px !important;
+
+  background: linear-gradient(135deg, #ff7a00, #ff5c00) !important;
+  color: white !important;
+
+  font-size: 16px;
+  font-weight: 800;
+
+  box-shadow: 0 11px 27px rgba(255,122,0,.25);
+  transition: all .2s ease;
+}
+
+.checkout button:hover,
+.checkout-btn:hover,
+.submit-order:hover,
+#submitOrder:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 32px rgba(255,122,0,.30);
+}
+
+.checkout button:active,
+.checkout-btn:active,
+.submit-order:active,
+#submitOrder:active {
+  transform: scale(.97);
+}
+
+/* Order success */
+.success,
+.order-success,
+.success-card {
+  background:
+    radial-gradient(circle at top right, rgba(34,197,94,.12), transparent 35%),
+    white !important;
+  border: 1px solid rgba(34,197,94,.14) !important;
+  border-radius: 24px !important;
+  box-shadow: var(--rg-shadow);
+}
+
+/* Toast */
+.toast,
+.notification {
+  border-radius: 15px !important;
+  background: rgba(17,24,39,.94) !important;
+  color: white !important;
+  box-shadow: 0 12px 35px rgba(0,0,0,.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Loading */
+.loading,
+.loader {
+  animation: rgPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes rgPulse {
+  0%, 100% {
+    opacity: .55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Smooth entrance */
+.menu-item,
+.food-card,
+.product-card,
+.item-card,
+.location-card {
+  animation: rgFadeUp .35s ease both;
+}
+
+@keyframes rgFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Better typography */
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -.5px;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+/* Mobile safe area */
+body {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Hide scrollbar while keeping scrolling */
+.categories,
+.horizontal-scroll {
+  scrollbar-width: none;
+}
+
+.categories::-webkit-scrollbar,
+.horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Dark Telegram theme compatibility */
+body.dark,
+.dark-theme {
+  --rg-bg: #0b0f14;
+  --rg-card: rgba(20,25,32,.88);
+  --rg-text: #f3f4f6;
+  --rg-muted: #9ca3af;
+  --rg-border: rgba(255,255,255,.08);
+  --rg-primary: #f3f4f6;
+}
+
+body.dark .menu-item,
+body.dark .food-card,
+body.dark .product-card,
+body.dark .item-card,
+.dark-theme .menu-item,
+.dark-theme .food-card,
+.dark-theme .product-card,
+.dark-theme .item-card {
+  background: rgba(20,25,32,.94) !important;
+  color: #f3f4f6;
+}
+
+body.dark .search,
+body.dark input,
+.dark-theme .search,
+.dark-theme input {
+  background: rgba(20,25,32,.95) !important;
+  color: #f3f4f6;
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+  .cart-button,
+  #cartButton,
+  .floating-cart {
+    left: 11px;
+    right: 11px;
+  }
+
+  .menu-item,
+  .food-card,
+  .product-card,
+  .item-card {
+    border-radius: 17px !important;
+  }
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
