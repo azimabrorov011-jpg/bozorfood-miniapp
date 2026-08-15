@@ -1,113 +1,150 @@
 <!doctype html>
 <html lang="uz">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>BozorFood</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+  >
+
+  <title>BozorFood</title>
+
+  <!-- Telegram Mini App -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Asosiy dizayn -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Premium dizayn -->
+  <link rel="stylesheet" href="premium.css">
 </head>
+
 
 <body>
 
 <div class="app">
 
-<header class="topbar">
-  <div>
-    <div class="brand">🍽 BozorFood</div>
-    <div class="subtitle">
-      Bozor ichida issiq ovqat — joyingizgacha
-    </div>
-  </div>
+  <!-- HEADER -->
+  <header class="topbar">
 
-  <div class="avatar">👤</div>
-</header>
+    <div>
 
-<main>
+      <div class="brand">
+        🍽 BozorFood
+      </div>
 
-<section class="location-card">
+      <div class="subtitle">
+        Bozor ichida issiq ovqat — joyingizgacha
+      </div>
 
-  <div class="pin">📍</div>
-
-  <div class="location-info">
-
-    <div class="label">
-      Sizning joyingiz
     </div>
 
+    <div class="avatar">
+      👤
+    </div>
+
+  </header>
+
+
+  <main>
+
+    <!-- LOCATION -->
+    <section class="location-card">
+
+      <div class="pin">
+        📍
+      </div>
+
+      <div class="location-info">
+
+        <div class="label">
+          Sizning joyingiz
+        </div>
+
+        <div
+          id="shopName"
+          class="shop-name"
+        >
+          Aniqlanmoqda...
+        </div>
+
+        <div
+          id="shopLocation"
+          class="shop-location"
+        >
+          ...
+        </div>
+
+      </div>
+
+      <div
+        id="shopId"
+        class="shop-id"
+      >
+        B001
+      </div>
+
+    </section>
+
+
+    <!-- SEARCH -->
+    <div class="search">
+
+      <span>
+        🔎
+      </span>
+
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Ovqat qidiring..."
+      >
+
+    </div>
+
+
+    <!-- CATEGORIES -->
     <div
-      id="shopName"
-      class="shop-name"
-    >
-      Aniqlanmoqda...
-    </div>
+      id="categories"
+      class="categories"
+    ></div>
 
-    <div
-      id="shopLocation"
-      class="shop-location"
-    >
-      ...
-    </div>
 
-  </div>
+    <!-- MENU -->
+    <section
+      id="menu"
+      class="menu"
+    ></section>
 
-  <div
-    id="shopId"
-    class="shop-id"
+  </main>
+
+
+  <!-- CART BUTTON -->
+  <button
+    id="cartButton"
+    class="cart-button hidden"
   >
-    B001
-  </div>
 
-</section>
+    <span>
+      🛒 Savatcha
+    </span>
 
+    <span id="cartCount">
+      0
+    </span>
 
-<div class="search">
+    <strong id="cartTotal">
+      0 so'm
+    </strong>
 
-  <span>🔎</span>
-
-  <input
-    id="searchInput"
-    type="search"
-    placeholder="Ovqat qidiring..."
-  >
+  </button>
 
 </div>
 
 
-<div
-  id="categories"
-  class="categories"
-></div>
-
-
-<section
-  id="menu"
-  class="menu"
-></section>
-
-</main>
-
-
-<button
-  id="cartButton"
-  class="cart-button hidden"
->
-
-  <span>🛒 Savatcha</span>
-
-  <span id="cartCount">
-    0
-  </span>
-
-  <strong id="cartTotal">
-    0 so'm
-  </strong>
-
-</button>
-
-</div>
-
-
+<!-- CART MODAL -->
 <div
   id="cartModal"
   class="modal hidden"
@@ -174,6 +211,7 @@
 </div>
 
 
+<!-- SUCCESS MODAL -->
 <div
   id="successModal"
   class="modal hidden"
@@ -206,8 +244,20 @@
 </div>
 
 
+<!--
+  SCRIPT TARTIBI MUHIM:
+
+  1. app.js — asosiy Mini App
+  2. secure-order.js — xavfsiz buyurtma RPC bridge
+  3. premium.js — Premium UX / Telegram / haptic
+-->
+
 <script src="app.js"></script>
+
 <script src="secure-order.js"></script>
+
+<script src="premium.js"></script>
+
 
 </body>
 </html>
