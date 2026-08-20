@@ -951,6 +951,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="staff-ui.css">
 </head>
 
 <body>
@@ -1130,6 +1131,16 @@
       <span>Buyurtmalar ro‘yxatini tekshiring.</span>
     </div>
 
+
+    <div class="order-toolbar">
+      <input
+        id="orderSearch"
+        type="search"
+        placeholder="Buyurtma, mijoz, telefon yoki do‘konni qidiring..."
+        oninput="setOrderSearch(this.value)"
+      >
+      <span id="orderCount" class="muted-count">0 ta buyurtma</span>
+    </div>
 
     <!-- FILTERS -->
 
@@ -1409,6 +1420,7 @@ let allShops = [];
 
 let currentFilter = "all";
 let currentQRCode = "";
+let orderSearch = "";
 
 
 /* =========================================================
@@ -1506,6 +1518,11 @@ function toast(message) {
       el.classList.remove("show");
     }, 2500);
 
+}
+
+function setOrderSearch(value) {
+  orderSearch = String(value || "").toLowerCase().trim();
+  renderOrders();
 }
 
 
@@ -1916,6 +1933,25 @@ function renderOrders() {
           currentFilter
       );
 
+  }
+
+  if (orderSearch) {
+    orders = orders.filter(order => {
+      const haystack = [
+        order.order_number,
+        order.id,
+        order.customer_name,
+        order.phone,
+        order.shop_code,
+        order.delivery_address
+      ].join(" ").toLowerCase();
+      return haystack.includes(orderSearch);
+    });
+  }
+
+  const count = document.getElementById("orderCount");
+  if (count) {
+    count.textContent = orders.length + " ta buyurtma";
   }
 
 
