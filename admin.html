@@ -7,6 +7,7 @@
   <title>RastaGo Admin</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="staff-api.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <!-- Supabase Realtime -->
@@ -1399,12 +1400,6 @@
    CONFIG
    ========================================================= */
 
-const SUPABASE_URL =
-  "https://uqgckzrmibdgxkxdfzav.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_KBodwmECQvN46zDKjOwfhg_fet6nBiy";
-
 const MINI_APP_URL =
   "https://azimabrorov011-jpg.github.io/bozorfood-miniapp/";
 
@@ -1518,85 +1513,35 @@ function toast(message) {
    SUPABASE REST
    ========================================================= */
 
-async function supabaseFetch(
-  table,
-  options = {}
-) {
+async function supabaseFetch(table, options = {}) {
+  const method = options.method || "GET";
 
-  const url =
-    SUPABASE_URL +
-    "/rest/v1/" +
-    table +
-    (options.query || "");
+  if (table === "orders" && method === "GET") {
+    const result = await RastaGoStaffApi.call("admin_list_orders");
+    return result.orders || [];
+  }
 
-  const response =
-    await fetch(url, {
+  if (table === "shops" && method === "GET") {
+    const result = await RastaGoStaffApi.call("admin_list_shops");
+    let shops = result.shops || [];
 
-      method:
-        options.method || "GET",
+    if ((options.query || "").includes("limit=1")) {
+      shops = shops.slice().sort((a, b) =>
+        String(b.shop_code || "").localeCompare(String(a.shop_code || ""))
+      ).slice(0, 1);
+    }
 
-      headers: {
+    return shops;
+  }
 
-        "apikey":
-          SUPABASE_KEY,
-
-        "Authorization":
-          "Bearer " + SUPABASE_KEY,
-
-        "Content-Type":
-          "application/json",
-
-        "Prefer":
-          options.prefer ||
-          "return=representation"
-
-      },
-
-      body:
-        options.body !== undefined
-          ? JSON.stringify(options.body)
-          : undefined
-
+  if (table === "shops" && method === "POST") {
+    const result = await RastaGoStaffApi.call("admin_create_shop", {
+      shop: options.body || {},
     });
-
-
-  const text =
-    await response.text();
-
-
-  if (!response.ok) {
-
-    let message = text;
-
-    try {
-
-      const parsed =
-        JSON.parse(text);
-
-      message =
-        parsed.message ||
-        parsed.hint ||
-        parsed.details ||
-        text;
-
-    } catch (_) {}
-
-    throw new Error(
-      message ||
-      "Supabase xatosi"
-    );
-
+    return result.shop ? [result.shop] : [];
   }
 
-
-  if (!text) return [];
-
-  try {
-    return JSON.parse(text);
-  } catch (_) {
-    return text;
-  }
-
+  throw new Error("Bu amal staff-api orqali qo‘llab-quvvatlanmaydi.");
 }
 
 
@@ -2249,65 +2194,14 @@ async function changeOrderStatus(
 
   try {
 
-    await supabaseFetch(
-      "orders",
-      {
-        method:
-          "PATCH",
-
-        query:
-          `?id=eq.${encodeURIComponent(
-            orderId
-          )}`,
-
-        body: {
-          status:
-            newStatus
-        },
-
-        prefer:
-          "return=minimal"
-      }
-    );
-
-
-    try {
-
-      await supabaseFetch(
-        "order_status_history",
-        {
-          method:
-            "POST",
-
-          body: {
-            order_id:
-              orderId,
-
-            status:
-              newStatus,
-
-            changed_by:
-              "admin",
-
-            note:
-              "Admin statusni " +
-              label +
-              " ga o‘zgartirdi"
-          },
-
-          prefer:
-            "return=minimal"
-        }
-      );
-
-    } catch (historyError) {
-
-      console.warn(
-        "Status history:",
-        historyError
-      );
-
-    }
+    await RastaGoStaffApi.call("admin_transition_order", {
+      order_id: Number(orderId),
+      status: newStatus,
+      note:
+        "Admin statusni " +
+        label +
+        " ga o‘zgartirdi"
+    });
 
 
     toast(
@@ -3513,6 +3407,12 @@ document.addEventListener(
   async () => {
 
     try {
+
+      const me = await RastaGoStaffApi.whoami();
+
+      if (!["admin", "ops"].includes(me.role)) {
+        throw new Error("Bu panel uchun admin yoki ops huquqi kerak.");
+      }
 
       await loadOrders();
 
