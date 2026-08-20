@@ -252,6 +252,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="staff-ui.css">
 </head>
 
 <body>
@@ -302,6 +303,18 @@
       <div class="metric-label">O‘rtacha chek</div>
       <div class="metric" id="average">—</div>
       <div class="metric-small">UZS / buyurtma</div>
+    </div>
+
+    <div class="card">
+      <div class="metric-label">Faol buyurtmalar</div>
+      <div class="metric" id="active">—</div>
+      <div class="metric-small">jarayonda</div>
+    </div>
+
+    <div class="card">
+      <div class="metric-label">Muvaffaqiyat darajasi</div>
+      <div class="metric" id="completion">—</div>
+      <div class="metric-small">yetkazilgan / jami</div>
     </div>
 
   </div>
@@ -394,6 +407,25 @@
 
   </div>
 
+  <div class="card courier-performance">
+    <div class="card-title">🚚 Kuryerlar samaradorligi</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Kuryer</th>
+            <th>Yetkazilgan</th>
+            <th>Faol</th>
+            <th>O‘rtacha vaqt</th>
+          </tr>
+        </thead>
+        <tbody id="couriers">
+          <tr><td colspan="4" class="empty">Yuklanmoqda...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 
@@ -423,6 +455,7 @@ async function loadAnalytics() {
 
     const orders = snapshot.orders || [];
     const delivered = orders.filter(x => x.status === "delivered");
+    const active = orders.filter(x => !["delivered", "cancelled"].includes(x.status));
 
     const revenue =
       delivered.reduce((sum,x) => sum + Number(x.total || 0), 0);
@@ -438,10 +471,14 @@ async function loadAnalytics() {
 
     document.getElementById("revenue").textContent = money(revenue);
     document.getElementById("average").textContent = money(average);
+    document.getElementById("active").textContent = active.length.toLocaleString("uz-UZ");
+    document.getElementById("completion").textContent =
+      orders.length ? Math.round(delivered.length / orders.length * 100) + "%" : "0%";
 
     renderChart(orders);
     loadShops(snapshot.shop_performance || []);
     loadProducts(snapshot.product_performance || []);
+    loadCouriers(snapshot.courier_performance || []);
 
   } catch(error) {
 
@@ -603,6 +640,24 @@ function loadProducts(data) {
 
     `).join("");
 
+}
+
+function loadCouriers(data) {
+  const body = document.getElementById("couriers");
+  if (!data.length) {
+    body.innerHTML =
+      '<tr><td colspan="4" class="empty">Hozircha kuryer statistikasi yo‘q</td></tr>';
+    return;
+  }
+
+  body.innerHTML = data.slice(0, 10).map(courier => `
+    <tr>
+      <td><strong>${courier.full_name || "—"}</strong></td>
+      <td>${Number(courier.delivered_orders || 0)}</td>
+      <td>${Number(courier.active_orders || 0)}</td>
+      <td>${courier.average_delivery_minutes ? courier.average_delivery_minutes + " daq." : "—"}</td>
+    </tr>
+  `).join("");
 }
 
 
