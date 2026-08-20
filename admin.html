@@ -1483,7 +1483,8 @@ function formatDate(value) {
       day: "2-digit",
       month: "2-digit",
       hour: "2-digit",
-      minute: "2-digit"
+      minute: "2-digit",
+      timeZone: "Asia/Tashkent"
     }
   );
 
@@ -1491,12 +1492,17 @@ function formatDate(value) {
 
 
 function todayStart() {
+  const date = new Intl.DateTimeFormat(
+    "en-CA",
+    {
+      timeZone: "Asia/Tashkent",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }
+  ).format(new Date());
 
-  const now = new Date();
-
-  now.setHours(0,0,0,0);
-
-  return now;
+  return new Date(date + "T00:00:00+05:00");
 
 }
 
