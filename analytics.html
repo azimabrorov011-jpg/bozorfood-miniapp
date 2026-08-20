@@ -252,6 +252,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="staff-ui.css">
 </head>
 
 <body>
@@ -302,6 +303,18 @@
       <div class="metric-label">O‘rtacha chek</div>
       <div class="metric" id="average">—</div>
       <div class="metric-small">UZS / buyurtma</div>
+    </div>
+
+    <div class="card">
+      <div class="metric-label">Faol buyurtmalar</div>
+      <div class="metric" id="active">—</div>
+      <div class="metric-small">jarayonda</div>
+    </div>
+
+    <div class="card">
+      <div class="metric-label">Muvaffaqiyat darajasi</div>
+      <div class="metric" id="completion">—</div>
+      <div class="metric-small">yetkazilgan / jami</div>
     </div>
 
   </div>
@@ -423,6 +436,7 @@ async function loadAnalytics() {
 
     const orders = snapshot.orders || [];
     const delivered = orders.filter(x => x.status === "delivered");
+    const active = orders.filter(x => !["delivered", "cancelled"].includes(x.status));
 
     const revenue =
       delivered.reduce((sum,x) => sum + Number(x.total || 0), 0);
@@ -438,6 +452,9 @@ async function loadAnalytics() {
 
     document.getElementById("revenue").textContent = money(revenue);
     document.getElementById("average").textContent = money(average);
+    document.getElementById("active").textContent = active.length.toLocaleString("uz-UZ");
+    document.getElementById("completion").textContent =
+      orders.length ? Math.round(delivered.length / orders.length * 100) + "%" : "0%";
 
     renderChart(orders);
     loadShops(snapshot.shop_performance || []);
