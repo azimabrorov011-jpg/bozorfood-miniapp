@@ -1,12 +1,32 @@
-# BozorFood Mini App v2
+# BozorFood / RastaGo
 
-QR/deep-link orqali ichki shop ID ni aniqlash uchun yangilangan MVP.
+Premium Telegram Mini App for hot-food delivery inside markets.
 
-Test:
-- `B001` → Test bozori · 3-qator · 47-do‘kon · Ali oshxonasi
-- `B002` → Test bozori · 2-qator · 18-do‘kon · Dilshod savdo
+## Product flow
 
-Brauzerda test qilish:
-`?startapp=B001`
+Customer opens a QR/deep link for a numbered stall → chooses food → checks out → Admin receives the order → Kitchen prepares it → Courier takes and delivers it → Analytics tracks the result.
 
-Keyingi bosqich: haqiqiy QR deep-linklar, backend/database, admin, oshxona va kuryer panellari.
+## Frontend
+
+- Customer Mini App: index.html
+- Admin panel: admin.html
+- Kitchen panel: kitchen.html
+- Courier panel: courier.html
+- Analytics: analytics.html
+- Shared customer styling: styles.css, premium.css
+- Shared staff styling: staff-ui.css
+
+## Security
+
+- Staff panels authenticate through the Telegram Web App signature and the Supabase staff-api Edge Function.
+- Staff roles are checked server-side: admin, ops, kitchen, and courier.
+- Staff order RPCs are executable only by service_role.
+- Customer order creation uses the atomic create_customer_order RPC, which validates prices, stock and idempotency on the server.
+
+## Deploy
+
+The repository is deployed through GitHub Pages:
+
+https://azimabrorov011-jpg.github.io/bozorfood-miniapp/
+
+Staff panels must be opened from Telegram so the verified Web App init data is available.
