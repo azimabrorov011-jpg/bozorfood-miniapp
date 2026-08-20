@@ -12,6 +12,9 @@
 
 <title>RastaGo Kitchen</title>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="staff-api.js"></script>
+
 <style>
 
 *{
@@ -350,15 +353,10 @@ Yuklanmoqda...
 
 <script>
 
-const SUPABASE_URL =
-"https://uqgckzrmibdgxkxdfzav.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_KBodwmECQvN46zDKjOwfhg_fet6nBiy";
-
 let kitchenData = {};
 
 let currentOrders = [];
+let preparedSnapshot = [];
 
 
 const productIcons = {
@@ -414,47 +412,18 @@ async function loadKitchen(){
 
   try{
 
-    const response = await fetch(
-
-      SUPABASE_URL +
-      "/rest/v1/orders" +
-      "?select=*" +
-      "&status=in.(new,preparing)" +
-      "&order=created_at.asc",
-
-      {
-        headers:{
-          apikey:SUPABASE_KEY,
-          Authorization:"Bearer "+SUPABASE_KEY
-        }
-      }
-
-    );
-
-
-    if(!response.ok){
-
-      const error =
-        await response.text();
-
-      document.getElementById("products").innerHTML =
-        `<div class="empty">Xatolik: ${error}</div>`;
-
-      return;
-
-    }
-
-
-    const orders =
-      await response.json();
-
+    const snapshot =
+      await RastaGoStaffApi.call("kitchen_snapshot", {
+        production_date: today()
+      });
 
     currentOrders =
-      orders;
+      snapshot.orders || [];
 
+    preparedSnapshot =
+      snapshot.kitchen_items || [];
 
-    await buildKitchen(orders);
-
+    await buildKitchen(currentOrders);
 
   }catch(error){
 
@@ -463,6 +432,8 @@ async function loadKitchen(){
     document.getElementById("products").innerHTML =
       `<div class="empty">
         Server bilan bog‘lanishda xatolik.
+        <br><br>
+        ${error.message}
       </div>`;
 
   }
@@ -539,60 +510,14 @@ async function loadPrepared(){
   const products =
     Object.values(kitchenData);
 
-
   if(!products.length)
     return;
 
-
-  const filter =
-    products
-      .map(x =>
-        `"${String(x.name).replace(/"/g,'\\"')}"`
-      )
-      .join(",");
-
-
-  const response = await fetch(
-
-    SUPABASE_URL +
-    "/rest/v1/kitchen_items" +
-    "?select=product_name,prepared_quantity" +
-    "&production_date=eq."+today() +
-    "&product_name=in.(" +
-    encodeURIComponent(filter) +
-    ")",
-
-    {
-      headers:{
-        apikey:SUPABASE_KEY,
-        Authorization:"Bearer "+SUPABASE_KEY
-      }
-    }
-
-  );
-
-
-  if(!response.ok){
-
-    console.log(
-      await response.text()
-    );
-
-    return;
-
-  }
-
-
-  const data =
-    await response.json();
-
-
-  data.forEach(row=>{
+  (preparedSnapshot || []).forEach(row=>{
 
     const key =
       String(row.product_name)
       .toLowerCase();
-
 
     if(kitchenData[key]){
 
@@ -818,86 +743,21 @@ async function savePrepared(product){
 
   try{
 
-    const response =
-      await fetch(
-
-        SUPABASE_URL +
-        "/rest/v1/kitchen_items" +
-        "?on_conflict=product_name,production_date",
-
-        {
-          method:"POST",
-
-          headers:{
-
-            apikey:SUPABASE_KEY,
-
-            Authorization:
-              "Bearer "+SUPABASE_KEY,
-
-            "Content-Type":
-              "application/json",
-
-            Prefer:
-              "resolution=merge-duplicates,return=minimal"
-
-          },
-
-          body:JSON.stringify({
-
-            product_name:
-              product.name,
-
-            required_quantity:
-              product.required,
-
-            prepared_quantity:
-              product.prepared,
-
-            production_date:
-              today(),
-
-            updated_at:
-              new Date().toISOString()
-
-          })
-
-        }
-
-      );
-
-
-    if(!response.ok){
-
-      const error =
-        await response.text();
-
-
-      console.log(
-        "Kitchen save error:",
-        error
-      );
-
-
-      showToast(
-        "❌ Saqlashda xatolik"
-      );
-
-
-      return false;
-
-    }
-
+    await RastaGoStaffApi.call("kitchen_save", {
+      product_name: product.name,
+      required_quantity: product.required,
+      prepared_quantity: product.prepared,
+      production_date: today()
+    });
 
     return true;
 
-
   }catch(error){
 
-    console.log(error);
+    console.log("Kitchen save error:", error);
 
     showToast(
-      "❌ Internet xatosi"
+      "❌ Saqlashda xatolik"
     );
 
     return false;
@@ -1009,10 +869,8 @@ async function checkAllReady(){
   const products =
     Object.values(kitchenData);
 
-
   if(!products.length)
     return;
-
 
   const allReady =
     products.every(product =>
@@ -1020,94 +878,31 @@ async function checkAllReady(){
       Number(product.required || 0)
     );
 
-
   if(!allReady)
     return;
 
-
   if(!currentOrders.length)
     return;
-
 
   showToast(
     "🎉 Barcha mahsulotlar tayyor!"
   );
 
+  try{
 
-  let successCount = 0;
-
-
-  for(const order of currentOrders){
-
-    try{
-
-      const response =
-        await fetch(
-
-          SUPABASE_URL +
-          "/rest/v1/orders?id=eq."+order.id,
-
-          {
-
-            method:"PATCH",
-
-            headers:{
-
-              apikey:SUPABASE_KEY,
-
-              Authorization:
-                "Bearer "+SUPABASE_KEY,
-
-              "Content-Type":
-                "application/json",
-
-              Prefer:
-                "return=minimal"
-
-            },
-
-            body:JSON.stringify({
-
-              status:"ready"
-
-            })
-
-          }
-
-        );
-
-
-      if(response.ok){
-
-        successCount++;
-
-      }else{
-
-        console.log(
-          "Order ready error:",
-          await response.text()
-        );
-
-      }
-
-    }catch(error){
-
-      console.log(
-        "Order status error:",
-        error
-      );
-
-    }
-
-  }
-
-
-  if(successCount > 0){
+    await RastaGoStaffApi.call("kitchen_mark_ready", {
+      order_ids: currentOrders.map(order => order.id)
+    });
 
     setTimeout(
       loadKitchen,
       1000
     );
+
+  }catch(error){
+
+    console.log("Order status error:", error);
+    showToast("❌ Buyurtmalarni tayyor deb belgilab bo‘lmadi");
 
   }
 
@@ -1227,13 +1022,24 @@ function showToast(text){
 }
 
 
-loadKitchen();
+async function startKitchen(){
+  try {
+    const me = await RastaGoStaffApi.whoami();
 
+    if (!["admin", "kitchen", "ops"].includes(me.role)) {
+      throw new Error("Bu panel uchun oshxona huquqi kerak.");
+    }
 
-setInterval(
-  loadKitchen,
-  15000
-);
+    await loadKitchen();
+    setInterval(loadKitchen, 15000);
+  } catch (error) {
+    console.error("Kitchen initialization:", error);
+    document.getElementById("products").innerHTML =
+      `<div class="empty">❌ ${error.message}</div>`;
+  }
+}
+
+startKitchen();
 
 </script>
 
