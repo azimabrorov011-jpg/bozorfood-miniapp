@@ -407,6 +407,25 @@
 
   </div>
 
+  <div class="card courier-performance">
+    <div class="card-title">🚚 Kuryerlar samaradorligi</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Kuryer</th>
+            <th>Yetkazilgan</th>
+            <th>Faol</th>
+            <th>O‘rtacha vaqt</th>
+          </tr>
+        </thead>
+        <tbody id="couriers">
+          <tr><td colspan="4" class="empty">Yuklanmoqda...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 
@@ -459,6 +478,7 @@ async function loadAnalytics() {
     renderChart(orders);
     loadShops(snapshot.shop_performance || []);
     loadProducts(snapshot.product_performance || []);
+    loadCouriers(snapshot.courier_performance || []);
 
   } catch(error) {
 
@@ -620,6 +640,24 @@ function loadProducts(data) {
 
     `).join("");
 
+}
+
+function loadCouriers(data) {
+  const body = document.getElementById("couriers");
+  if (!data.length) {
+    body.innerHTML =
+      '<tr><td colspan="4" class="empty">Hozircha kuryer statistikasi yo‘q</td></tr>';
+    return;
+  }
+
+  body.innerHTML = data.slice(0, 10).map(courier => `
+    <tr>
+      <td><strong>${courier.full_name || "—"}</strong></td>
+      <td>${Number(courier.delivered_orders || 0)}</td>
+      <td>${Number(courier.active_orders || 0)}</td>
+      <td>${courier.average_delivery_minutes ? courier.average_delivery_minutes + " daq." : "—"}</td>
+    </tr>
+  `).join("");
 }
 
 
