@@ -52,9 +52,18 @@
     return "";
   }
 
+  function staffTokenFromUrl() {
+    try {
+      return new URLSearchParams(window.location.search).get("staff_token") || "";
+    } catch (_) {
+      return "";
+    }
+  }
+
   async function call(action, body = {}) {
-    const initData = await getInitData();
-    if (!initData) {
+    const staffToken = staffTokenFromUrl();
+    const initData = staffToken ? "" : await getInitData();
+    if (!initData && !staffToken) {
       throw new Error("Panelni bot ichidagi Web App tugmasi orqali qayta oching.");
     }
 
@@ -63,6 +72,7 @@
       headers: {
         "Content-Type": "application/json",
         "x-telegram-init-data": initData,
+        "x-telegram-staff-token": staffToken,
       },
       body: JSON.stringify({ action, ...body }),
     });
