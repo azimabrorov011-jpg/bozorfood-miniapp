@@ -18,7 +18,7 @@
     const messages = {
       STAFF_ACCESS_DENIED: "Sizga bu panelga kirish ruxsati berilmagan.",
       FORBIDDEN: "Bu amal uchun sizda yetarli huquq yo‘q.",
-      TELEGRAM_INIT_DATA_REQUIRED: "Bu panelni Telegram ichidan oching.",
+      TELEGRAM_INIT_DATA_REQUIRED: "Panelni bot ichidagi Web App tugmasi orqali qayta oching.",
       TELEGRAM_INIT_DATA_EXPIRED: "Telegram sessiyasi eskirgan. Panelni qayta oching.",
       TELEGRAM_SIGNATURE_INVALID: "Telegram sessiyasi tasdiqlanmadi.",
       TELEGRAM_INIT_DATA_INVALID: "Telegram sessiyasi noto‘g‘ri.",
@@ -29,13 +29,33 @@
       (status ? "Server xatosi (" + status + ")" : "Noma’lum xatolik");
   }
 
-  async function call(action, body = {}) {
+  function initDataFromHash() {
+    try {
+      const hash = String(window.location.hash || "").replace(/^#/, "");
+      const params = new URLSearchParams(hash);
+      return params.get("tgWebAppData") || "";
+    } catch (_) {
+      return "";
+    }
+  }
+
+  async function getInitData() {
     initTelegram();
 
-    const app = telegram();
-    const initData = app?.initData || "";
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      const app = telegram();
+      const initData = app?.initData || initDataFromHash();
+      if (initData) return initData;
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    }
+
+    return "";
+  }
+
+  async function call(action, body = {}) {
+    const initData = await getInitData();
     if (!initData) {
-      throw new Error("Bu panelni Telegram ichidan oching.");
+      throw new Error("Panelni bot ichidagi Web App tugmasi orqali qayta oching.");
     }
 
     const response = await fetch(ENDPOINT, {
